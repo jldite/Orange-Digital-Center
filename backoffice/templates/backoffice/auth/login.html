@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion Admin | Orange Digital Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'orange-primary': '#FF7900',
+                        'orange-dark': '#E56E00',
+                        'orange-light': '#FF9E42',
+                        'black-primary': '#000000',
+                        'gray-dark': '#333333',
+                        'gray-light': '#F5F5F5',
+                        'dark-bg': '#121212',
+                        'dark-card': '#1e1e1e',
+                        'dark-text': '#e0e0e0'
+                    },
+                    spacing: {
+                        '100': '20rem',
+                        '110': '22rem'
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'fade-in': 'fadeIn 0.5s ease-in forwards'
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' }
+                        },
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            padding: 0.5rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            animation: fade-in 0.8s;
+            background-color: #f0f2f5;
+        }
+
+        body.dark {
+            background-color: #121212;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .dark .glass-effect {
+            background: rgba(30, 30, 30, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card-shadow {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark .card-shadow {
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(255, 121, 0, 0.4);
+        }
+
+        .password-toggle {
+            right: 16px; /* Ajustement de la position */
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #777;
+            z-index: 10; /* S'assurer qu'il est au-dessus */
+        }
+
+        .dark .password-toggle {
+            color: #aaa;
+        }
+
+        .password-toggle:hover {
+            color: #FF7900;
+        }
+
+        .brand-logo {
+            filter: drop-shadow(0 0 8px rgba(255, 121, 0, 0.4));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .security-item {
+            transition: transform 0.3s ease;
+        }
+
+        .security-item:hover {
+            transform: translateX(5px);
+        }
+
+        .social-icon {
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            transform: translateY(-3px);
+            color: #FF7900;
+        }
+
+        .login-btn {
+            background: linear-gradient(to right, #FF7900, #FF9E42);
+            box-shadow: 0 4px 15px rgba(255, 121, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-btn::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 20px;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(25deg);
+            transition: all 0.6s;
+        }
+
+        .login-btn:hover::after {
+            left: 120%;
+        }
+
+        .social-btn {
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .social-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .divider {
+            position: relative;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #ddd, transparent);
+        }
+
+        .dark .divider {
+            background: linear-gradient(to right, transparent, #444, transparent);
+        }
+
+        .divider-text {
+            background: white;
+        }
+
+        .dark .divider-text {
+            background: #1e1e1e;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+            color: #FF9E42;
+        }
+
+        .input-icon {
+            color: #FF7900;
+        }
+
+        .theme-switcher {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .dark .theme-switcher {
+            background: rgba(30,30,30,0.9);
+        }
+
+        /* Correction pour l'icône d'œil */
+        .password-container {
+            position: relative;
+        }
+
+        .password-toggle-btn {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .login-container {
+                width: 95%;
+                margin: 1rem auto;
+            }
+
+            .brand-section {
+                padding: 1.5rem !important;
+            }
+
+            .theme-switcher {
+                top: 10px;
+                right: 10px;
+                width: 40px;
+                height: 40px;
+            }
+        }
+    </style>
+</head>
+<body class="light">
+    <!-- Theme switcher -->
+    <div class="theme-switcher" id="themeSwitcher">
+        <i class="fas fa-moon text-gray-800 text-xl" id="themeIcon"></i>
+    </div>
+
+    <div class="login-container w-full max-w-4xl mx-auto px-4">
+        <div class="flex flex-col md:flex-row rounded-2xl overflow-hidden card-shadow bg-white dark:bg-dark-card">
+            <!-- Brand Section -->
+            <div class="md:w-2/5 glass-effect p-8 flex flex-col justify-between brand-section">
+                <div>
+                    <div class="flex items-center mb-8">
+                        <div class="brand-logo w-12 h-12 rounded-xl bg-gradient-to-br from-orange-primary to-orange-dark flex items-center justify-center mr-3">
+                            <i class="fas fa-lock text-white text-xl"></i>
+                        </div>
+                        <h1 class="text-2xl font-bold text-orange-primary">Orange <span class="text-gray-900 dark:text-white">Digital Center</span></h1>
+                    </div>
+
+                    <h2 class="text-3xl font-bold mb-4 text-gray-900 dark:text-white">Espace <span class="text-orange-primary">Administrateur</span></h2>
+                    <p class="text-gray-700 dark:text-gray-300 mb-6 leading-relaxed">Accédez au tableau de bord pour gérer les événements, les participants et les rapports de votre centre digital.</p>
+
+                    <div class="glass-effect rounded-xl p-5 mb-6 border border-orange-primary border-opacity-20">
+                        <h3 class="text-orange-primary font-bold mb-3 text-lg flex items-center">
+                            <i class="fas fa-shield-alt mr-2"></i>
+                            Sécurité renforcée
+                        </h3>
+                        <ul class="space-y-3">
+                            <li class="security-item flex items-center text-gray-700 dark:text-gray-300">
+                                <div class="w-8 h-8 rounded-full bg-orange-primary bg-opacity-20 flex items-center justify-center mr-3">
+                                    <i class="fas fa-fingerprint text-orange-primary"></i>
+                                </div>
+                                <span>Authentification à deux facteurs</span>
+                            </li>
+                            <li class="security-item flex items-center text-gray-700 dark:text-gray-300">
+                                <div class="w-8 h-8 rounded-full bg-orange-primary bg-opacity-20 flex items-center justify-center mr-3">
+                                    <i class="fas fa-lock text-orange-primary"></i>
+                                </div>
+                                <span>Chiffrement AES-256</span>
+                            </li>
+                            <li class="security-item flex items-center text-gray-700 dark:text-gray-300">
+                                <div class="w-8 h-8 rounded-full bg-orange-primary bg-opacity-20 flex items-center justify-center mr-3">
+                                    <i class="fas fa-history text-orange-primary"></i>
+                                </div>
+                                <span>Journalisation des accès</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-6">
+                    <p class="text-gray-500 dark:text-gray-400 text-sm mb-3">© 2024 Orange Digital Center. Tous droits réservés.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="social-icon text-gray-500 hover:text-orange-primary dark:text-gray-400">
+                            <i class="fab fa-facebook text-lg"></i>
+                        </a>
+                        <a href="#" class="social-icon text-gray-500 hover:text-orange-primary dark:text-gray-400">
+                            <i class="fab fa-twitter text-lg"></i>
+                        </a>
+                        <a href="#" class="social-icon text-gray-500 hover:text-orange-primary dark:text-gray-400">
+                            <i class="fab fa-linkedin text-lg"></i>
+                        </a>
+                        <a href="#" class="social-icon text-gray-500 hover:text-orange-primary dark:text-gray-400">
+                            <i class="fab fa-instagram text-lg"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Login Form Section -->
+            <div class="md:w-3/5 p-8 md:p-10 flex flex-col justify-center">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Connexion Administrateur</h2>
+                    <p class="text-gray-600 dark:text-gray-400">Entrez vos identifiants pour accéder à votre espace</p>
+                </div>
+
+                <!-- Affichage des messages d'erreur -->
+                {% if messages %}
+                <div class="mb-6">
+                    {% for message in messages %}
+                    <div class="p-3 bg-red-100 text-red-700 rounded-lg mb-3 dark:bg-red-900 dark:text-red-100">
+                        {{ message }}
+                    </div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- FORMULAIRE AVEC LE VRAI LIEN DE CONNEXION -->
+                <form method="POST" action="{% url 'backoffice:admin_login' %}" class="space-y-5">
+                    {% csrf_token %}
+
+                    <!-- Champ nom d'utilisateur -->
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none input-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <input
+                            type="text"
+                            id="username"
+                            name="username"
+                            class="w-full pl-12 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white rounded-xl focus:border-orange-primary focus:ring-0 placeholder-gray-500"
+                            placeholder="Nom d'utilisateur"
+                            required
+                            autocomplete="username"
+                            value="{{ request.POST.username }}"
+                        >
+                    </div>
+
+                    <!-- Champ mot de passe - Correction de l'icône œil -->
+                    <div class="password-container relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none input-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            class="w-full pl-12 pr-12 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white rounded-xl focus:border-orange-primary focus:ring-0 placeholder-gray-500"
+                            placeholder="Mot de passe"
+                            required
+                            autocomplete="current-password"
+                        >
+                        <button type="button" onclick="togglePassword()" class="password-toggle-btn">
+                            <i id="toggleIcon" class="far fa-eye"></i>
+                        </button>
+                    </div>
+
+                    <!-- Remember Me & Forgot Password -->
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center">
+                            <input
+                                type="checkbox"
+                                id="remember"
+                                name="remember"
+                                class="h-4 w-4 text-orange-primary focus:ring-orange-primary bg-gray-50 dark:bg-gray-800 border-gray-300 dark:border-gray-700 rounded"
+                            >
+                            <label for="remember" class="ml-2 text-gray-700 dark:text-gray-300">Se souvenir de moi</label>
+                        </div>
+                        <a href="#" class="font-medium text-orange-primary hover:text-orange-dark dark:hover:text-orange-light">
+                            Mot de passe oublié?
+                        </a>
+                    </div>
+
+                    <!-- Bouton de soumission -->
+                    <button
+                        type="submit"
+                        id="loginButton"
+                        class="login-btn w-full text-white font-bold py-3.5 px-4 rounded-xl focus:outline-none focus:shadow-outline mt-2"
+                    >
+                        <span id="buttonText">Se connecter</span>
+                    </button>
+
+                    <!-- Divider -->
+                    <div class="relative my-6">
+                        <div class="divider"></div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="divider-text px-4 text-gray-500 dark:text-gray-400 text-sm">Ou continuer avec</span>
+                        </div>
+                    </div>
+
+                    <!-- Social Login Buttons -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <button
+                            type="button"
+                            class="social-btn flex items-center justify-center py-3 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-750"
+                        >
+                            <i class="fab fa-google text-red-500 mr-3 text-lg"></i>
+                            <span>Google</span>
+                        </button>
+                        <button
+                            type="button"
+                            class="social-btn flex items-center justify-center py-3 px-4 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-750"
+                        >
+                            <i class="fab fa-microsoft text-blue-500 mr-3 text-lg"></i>
+                            <span>Microsoft</span>
+                        </button>
+                    </div>
+
+                    <!-- Signup Link -->
+                    <div class="mt-6 text-center text-gray-600 dark:text-gray-400">
+                        <p>Vous n'avez pas de compte? <a href="#" class="font-medium text-orange-primary hover:text-orange-dark dark:hover:text-orange-light">Contactez l'administrateur</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="mt-6 text-center text-sm text-gray-500 dark:text-gray-400">
+            <p>
+                <a href="#" class="footer-link mr-4">Protection des données</a>
+                <a href="#" class="footer-link mr-4">Conditions d'utilisation</a>
+                <a href="#" class="footer-link">Support technique</a>
+            </p>
+            <p class="mt-2">Dernière mise à jour : 15/05/2024</p>
+        </div>
+    </div>
+
+    <script>
+        // Fonction pour basculer le mot de passe
+        function togglePassword() {
+            const passwordInput = document.getElementById('password');
+            const toggleIcon = document.getElementById('toggleIcon');
+
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Gestion du thème
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeSwitcher = document.getElementById('themeSwitcher');
+            const themeIcon = document.getElementById('themeIcon');
+            const body = document.body;
+
+            // Vérifier le thème dans localStorage
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                body.classList.add('dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            }
+
+            // Basculer le thème
+            themeSwitcher.addEventListener('click', function() {
+                body.classList.toggle('dark');
+
+                if (body.classList.contains('dark')) {
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+
+            // Animation de chargement lors de la soumission
+            document.querySelector('form').addEventListener('submit', function() {
+                const button = document.getElementById('loginButton');
+                const buttonText = document.getElementById('buttonText');
+
+                buttonText.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Connexion...';
+                button.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>

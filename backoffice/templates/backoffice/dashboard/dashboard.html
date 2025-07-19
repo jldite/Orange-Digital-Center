@@ -1,0 +1,241 @@
+{% extends "backoffice/base.html" %}
+
+{% block title %}Tableau de bord | Orange Digital Center{% endblock %}
+
+{% block dashboard_active %}active-sidebar-link{% endblock %}
+
+{% block page_title %}Tableau de bord{% endblock %}
+{% block page_subtitle %}Statistiques et indicateurs clés{% endblock %}
+
+{% block content %}
+    <!-- Dashboard Content -->
+    <div class="flex-1 overflow-y-auto p-6 bg-gray-light">
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-black-primary mb-2">Engage for Change</h2>
+        <p class="text-gray-600 max-w-3xl">Orange s'assure que vos données sont traitées en toute sécurité et confidentialité, avec des mesures techniques et organisationnelles adaptées.</p>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="stat-card bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500">Événements total</p>
+              <p class="text-3xl font-bold text-orange-primary">128</p>
+              <div class="mt-2 flex items-center text-green-600 text-sm">
+                <i class="fas fa-arrow-up mr-1"></i>
+                <span>12% depuis le mois dernier</span>
+              </div>
+            </div>
+            <div class="bg-orange-100 p-3 rounded-full">
+              <i class="fas fa-calendar text-orange-primary text-xl"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500">Participants</p>
+              <p class="text-3xl font-bold text-orange-primary">2,434</p>
+              <div class="mt-2 flex items-center text-green-600 text-sm">
+                <i class="fas fa-arrow-up mr-1"></i>
+                <span>18% depuis le mois dernier</span>
+              </div>
+            </div>
+            <div class="bg-orange-100 p-3 rounded-full">
+              <i class="fas fa-users text-orange-primary text-xl"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500">Taux de participation</p>
+              <p class="text-3xl font-bold text-orange-primary">85%</p>
+              <div class="mt-2 flex items-center text-green-600 text-sm">
+                <i class="fas fa-arrow-up mr-1"></i>
+                <span>5% depuis le mois dernier</span>
+              </div>
+            </div>
+            <div class="bg-orange-100 p-3 rounded-full">
+              <i class="fas fa-chart-line text-orange-primary text-xl"></i>
+            </div>
+          </div>
+        </div>
+
+        <div class="stat-card bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500">Satisfaction</p>
+              <div class="flex items-center">
+                <p class="text-3xl font-bold text-orange-primary mr-2">4.5</p>
+                <div class="flex text-orange-primary">
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star"></i>
+                  <i class="fas fa-star-half-alt"></i>
+                </div>
+              </div>
+              <div class="mt-2 text-sm text-gray-600">
+                <span class="font-medium">+0.3</span> depuis le trimestre dernier
+              </div>
+            </div>
+            <div class="bg-orange-100 p-3 rounded-full">
+              <i class="fas fa-star text-orange-primary text-xl"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Row -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        <!-- Participation par genre -->
+        <div class="chart-container bg-white rounded-xl shadow-card p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">Participation par genre</h2>
+            <div class="flex space-x-2">
+              <button class="text-xs px-3 py-1 bg-gray-100 rounded-full">Mois</button>
+              <button class="text-xs px-3 py-1 bg-orange-primary text-white rounded-full">Trimestre</button>
+              <button class="text-xs px-3 py-1 bg-gray-100 rounded-full">Année</button>
+            </div>
+          </div>
+          <div class="h-64">
+            <canvas id="genderChart"></canvas>
+          </div>
+          <div class="mt-4 grid grid-cols-2 gap-4">
+            <div class="bg-gray-100 p-4 rounded-lg">
+              <div class="flex justify-between items-center mb-1">
+                <p class="text-gray-500">Hommes</p>
+                <p class="text-xl font-bold">65%</p>
+              </div>
+              <div class="w-full h-2 bg-gray-300 rounded-full overflow-hidden progress-bar" style="--gradient-start: #000000; --gradient-end: #000000">
+                <div class="bg-black-primary h-2 rounded-full" style="width: 65%"></div>
+              </div>
+            </div>
+            <div class="bg-gray-100 p-4 rounded-lg">
+              <div class="flex justify-between items-center mb-1">
+                <p class="text-gray-500">Femmes</p>
+                <p class="text-xl font-bold">35%</p>
+              </div>
+              <div class="w-full h-2 bg-gray-300 rounded-full overflow-hidden progress-bar" style="--gradient-start: #FF7900; --gradient-end: #FF9E42">
+                <div class="bg-orange-primary h-2 rounded-full" style="width: 35%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Événements par type -->
+        <div class="chart-container bg-white rounded-xl shadow-card p-6">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-xl font-bold">Événements par type</h2>
+            <div class="flex space-x-2">
+              <button class="text-xs px-3 py-1 bg-gray-100 rounded-full">Mois</button>
+              <button class="text-xs px-3 py-1 bg-orange-primary text-white rounded-full">Trimestre</button>
+              <button class="text-xs px-3 py-1 bg-gray-100 rounded-full">Année</button>
+            </div>
+          </div>
+          <div class="h-64">
+            <canvas id="eventsChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Events -->
+      <div class="bg-white rounded-xl shadow-card p-6 mb-8">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold">Derniers événements</h2>
+          <button class="text-orange-primary hover:text-orange-dark font-medium flex items-center">
+            Voir tout <i class="fas fa-arrow-right ml-2 transition-transform hover:translate-x-1"></i>
+          </button>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-gray-200">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Événement</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Participants</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+              <tr class="event-row">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="font-medium text-black-primary">Formation Python Avancé</div>
+                  <div class="text-sm text-gray-500">Fab Lab</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-primary">Formation</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500">15 Juin 2024</div>
+                  <div class="text-xs text-gray-400">14h00 - 17h00</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500">42</div>
+                  <div class="text-xs text-gray-400">(38 présents)</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Terminé</span>
+                </td>
+              </tr>
+              <tr class="event-row bg-gray-50">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="font-medium text-black-primary">Conférence IA</div>
+                  <div class="text-sm text-gray-500">Digital</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Conférence</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500">22 Juin 2024</div>
+                  <div class="text-xs text-gray-400">09h30 - 12h30</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500">128</div>
+                  <div class="text-xs text-gray-400">(112 présents)</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">En cours</span>
+                </td>
+              </tr>
+              <tr class="event-row">
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="font-medium text-black-primary">Atelier Design</div>
+                  <div class="text-sm text-gray-500">ODC Clubs</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">Atelier</span>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500">28 Juin 2024</div>
+                  <div class="text-xs text-gray-400">10h00 - 13h00</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="text-sm text-gray-500">24</div>
+                  <div class="text-xs text-gray-400">Inscriptions</div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">À venir</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+{% endblock %}
+
+{% block chart_js %}
+  // Initialisation spécifique des graphiques pour cette page
+  const genderCtx = document.getElementById('genderChart')?.getContext('2d');
+  if (genderCtx) {
+    new Chart(genderCtx, {
+      // Configuration du graphique
+    });
+  }
+{% endblock %}

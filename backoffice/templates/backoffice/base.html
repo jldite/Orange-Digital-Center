@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Dashboard | Orange Digital Center{% endblock %}</title>
+
+  <!-- Tailwind & Chart.js & FontAwesome -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+
+  <!-- Config Tailwind -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'orange-primary': '#FF7900',
+            'orange-dark':    '#E56E00',
+            'orange-light':   '#FF9E42',
+            'black-primary':  '#000000',
+            'gray-dark':      '#333333',
+            'gray-light':     '#F5F5F5',
+            'gradient-start': '#FF9E42',
+            'gradient-end':   '#FF7900'
+          },
+          boxShadow: {
+            'card': '0 4px 20px rgba(0, 0, 0, 0.08)',
+            'card-hover': '0 8px 25px rgba(0, 0, 0, 0.12)',
+            'topbar': '0 2px 10px rgba(0, 0, 0, 0.05)',
+            'sidebar': '4px 0 15px rgba(0, 0, 0, 0.05)'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Styles confetti & menu -->
+  <style>
+    @keyframes confetti-fall {
+      0%   { transform: translateY(-100vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+    .confetti {
+      position: absolute;
+      width: 10px; height: 10px;
+      background-color: #FF7900;
+      animation: confetti-fall 3s linear forwards;
+      z-index: 1000;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .profile-menu {
+      animation: slideIn 0.3s ease-out forwards;
+    }
+    .profile-menu-item {
+      transition: all 0.2s ease;
+    }
+    .profile-menu-item:hover {
+      background-color: #f3f4f6;
+      transform: translateX(5px);
+    }
+
+    /* Nouveaux styles */
+    .stat-card {
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .stat-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, var(--gradient-start), var(--gradient-end));
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .stat-card:hover::after {
+      opacity: 1;
+    }
+
+    .chart-container {
+      background: linear-gradient(145deg, #ffffff, #fafafa);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+
+    .chart-container:hover {
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    }
+
+    .progress-bar {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-bar::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      background: currentColor;
+      opacity: 0.15;
+      border-radius: 9999px;
+    }
+
+    .event-row {
+      transition: all 0.2s ease;
+    }
+
+    .event-row:hover {
+      background-color: #f9f9f9 !important;
+      transform: translateX(3px);
+    }
+
+    .status-badge {
+      transition: all 0.2s ease;
+    }
+
+    .status-badge:hover {
+      transform: scale(1.05);
+    }
+
+    .sidebar-link {
+      transition: all 0.3s ease;
+      position: relative;
+    }
+
+    .sidebar-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: linear-gradient(90deg, #FF9E42, #FF7900);
+      transition: width 0.3s ease;
+    }
+
+    .sidebar-link:hover::after {
+      width: 100%;
+    }
+
+    .active-sidebar-link {
+      background: linear-gradient(90deg, rgba(255, 158, 66, 0.1), transparent);
+    }
+
+    .active-sidebar-link::after {
+      width: 100%;
+    }
+
+    .gradient-bg {
+      background: linear-gradient(145deg, #FF7900, #FF9E42);
+    }
+
+    .pulse {
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(255, 121, 0, 0.4); }
+      70% { box-shadow: 0 0 0 10px rgba(255, 121, 0, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 121, 0, 0); }
+    }
+  </style>
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body class="bg-gray-light flex h-screen">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-gradient-to-b from-black-primary to-gray-dark text-white flex flex-col shadow-sidebar">
+    <div class="p-4 text-center border-b border-gray-800">
+      <h1 class="text-2xl font-bold text-orange-primary">Orange <span class="text-white">Digital Center</span></h1>
+    </div>
+
+    <div class="p-4 flex flex-col items-center border-b border-gray-800">
+      <div class="w-20 h-20 rounded-full border-2 border-orange-primary bg-gray-200 flex items-center justify-center mb-3 pulse">
+        {% if user.profile.photo %}
+          <img src="{{ user.profile.photo.url }}" alt="Photo de profil" class="w-full h-full rounded-full">
+        {% else %}
+          <i class="fas fa-user text-gray-600 text-3xl"></i>
+        {% endif %}
+      </div>
+      <h2 class="mt-2 font-semibold">{{ user.get_full_name }}</h2>
+      <p class="text-gray-400 text-sm">{{ user.email }}</p>
+      <div class="mt-2 flex space-x-1">
+        <span class="px-2 py-1 bg-orange-primary/20 text-orange-light text-xs rounded-full">Administrateur</span>
+        <span class="px-2 py-1 bg-orange-primary/20 text-orange-light text-xs rounded-full">ODC Expert</span>
+      </div>
+    </div>
+
+    <nav class="flex-1 py-4">
+      <a href="{% url 'backoffice:backoffice_dashboard' %}"
+         class="{% if request.resolver_match.url_name == 'backoffice_dashboard' %}active-sidebar-link{% endif %} block py-3 px-6 border-l-4 border-orange-primary text-white sidebar-link">
+        <i class="fas fa-home mr-3"></i> Tableau de bord
+      </a>
+      <a href="{% url 'backoffice:event_list' %}"
+         class="{% if request.resolver_match.url_name == 'event_list' %}active-sidebar-link{% endif %} block py-3 px-6 hover:bg-orange-primary/10 border-l-4 border-transparent text-gray-400 hover:text-white sidebar-link">
+        <i class="fas fa-calendar mr-3"></i> Événements
+      </a>
+      <a href="{% url 'backoffice:participant_list' %}"
+         class="{% if request.resolver_match.url_name == 'participant_list' %}active-sidebar-link{% endif %} block py-3 px-6 hover:bg-orange-primary/10 border-l-4 border-transparent text-gray-400 hover:text-white sidebar-link">
+        <i class="fas fa-users mr-3"></i> Participants
+      </a>
+      <a href="{% url 'backoffice:generate_report' 'summary' %}"
+         class="{% if request.resolver_match.url_name == 'generate_report' %}active-sidebar-link{% endif %} block py-3 px-6 hover:bg-orange-primary/10 border-l-4 border-transparent text-gray-400 hover:text-white sidebar-link">
+        <i class="fas fa-chart-bar mr-3"></i> Rapports
+      </a>
+      <a href="{% url 'backoffice:system_settings' %}"
+         class="{% if request.resolver_match.url_name == 'system_settings' %}active-sidebar-link{% endif %} block py-3 px-6 hover:bg-orange-primary/10 border-l-4 border-transparent text-gray-400 hover:text-white sidebar-link">
+        <i class="fas fa-cog mr-3"></i> Paramètres
+      </a>
+    </nav>
+
+    <div class="p-4 text-center text-gray-500 text-sm border-t border-gray-800">
+      © {% now "Y" %} Orange Digital Center
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-1 flex flex-col overflow-hidden">
+    <!-- Top Bar -->
+    <header class="bg-white shadow-topbar">
+      <div class="flex items-center justify-between p-4">
+        <div>
+          <h1 class="text-xl font-bold text-black-primary">{% block page_title %}Dashboard{% endblock %}</h1>
+          <p class="text-sm text-gray-500">{% block page_subtitle %}Bienvenue dans votre espace d'administration{% endblock %}</p>
+        </div>
+        <div class="flex items-center space-x-4">
+          <div class="relative">
+            <input type="text" placeholder="Rechercher..." class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent w-64">
+            <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+          </div>
+          <button class="relative p-2 text-gray-500 hover:text-orange-primary transition-colors">
+            <i class="fas fa-bell"></i>
+            <span class="absolute top-0 right-0 bg-orange-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+          </button>
+          <button class="relative p-2 text-gray-500 hover:text-orange-primary transition-colors">
+            <i class="fas fa-envelope"></i>
+            <span class="absolute top-0 right-0 bg-orange-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">5</span>
+          </button>
+
+          <!-- Zone de profil avec menu déroulant -->
+          <div class="flex items-center relative" id="profile-container">
+            <button id="profile-btn" class="flex items-center focus:outline-none">
+              <div class="w-10 h-10 rounded-full border-2 border-orange-primary bg-gray-200 flex items-center justify-center">
+                {% if user.profile.photo %}
+                <img src="{{ user.profile.photo.url }}" alt="Photo de profil" class="w-full h-full rounded-full">
+                {% else %}
+                <i class="fas fa-user text-gray-600"></i>
+                {% endif %}
+              </div>
+              <span class="ml-2 font-medium">{{ user.get_short_name }}</span>
+              <i class="fas fa-chevron-down ml-2 text-sm text-gray-500"></i>
+            </button>
+
+            <!-- Menu profil (caché par défaut) -->
+            <div id="profile-menu" class="absolute hidden right-0 mt-2 w-60 bg-white rounded-lg shadow-2xl z-50 overflow-hidden profile-menu">
+              <div class="p-4 border-b">
+                <div class="flex items-center">
+                  <div class="w-12 h-12 rounded-full border-2 border-orange-primary bg-gray-200 flex items-center justify-center mr-3">
+                    {% if user.profile.photo %}
+                    <img src="{{ user.profile.photo.url }}" alt="Photo de profil" class="w-full h-full rounded-full">
+                    {% else %}
+                    <i class="fas fa-user text-gray-600"></i>
+                    {% endif %}
+                  </div>
+                  <div>
+                    <p class="font-semibold">{{ user.get_full_name }}</p>
+                    <p class="text-sm text-gray-500">Administrateur</p>
+                  </div>
+                </div>
+              </div>
+
+              <div class="py-2">
+                <a href="{% url 'backoffice:profile' %}" class="profile-menu-item block px-4 py-3 text-gray-700 hover:bg-gray-50 flex items-center">
+                  <i class="fas fa-user-edit mr-3 text-orange-primary"></i>
+                  Éditer le profil
+                </a>
+                <a href="{% url 'backoffice:admin_logout' %}" class="profile-menu-item block px-4 py-3 text-gray-700 hover:bg-gray-50 flex items-center">
+                  <i class="fas fa-sign-out-alt mr-3 text-orange-primary"></i>
+                  Déconnexion
+                </a>
+              </div>
+
+              <div class="px-4 py-3 bg-gray-100 text-center text-xs text-gray-500">
+                Orange Digital Center © {% now "Y" %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Dashboard Content -->
+    <div class="flex-1 overflow-y-auto p-6 bg-gray-light">
+      {% block content %}
+      {# Le contenu principal de chaque page sera inséré ici #}
+      {% endblock %}
+    </div>
+  </main>
+
+  <!-- Scripts en bas pour que le DOM soit prêt -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const profileBtn  = document.getElementById('profile-btn');
+      const profileMenu = document.getElementById('profile-menu');
+      let confettiActive = false;
+
+      // Toggle du menu profil
+      if (profileBtn && profileMenu) {
+        profileBtn.addEventListener('click', e => {
+          e.stopPropagation();
+          const nowHidden = profileMenu.classList.toggle('hidden');
+          if (!confettiActive && !nowHidden) {
+            createConfetti();
+            confettiActive = true;
+          }
+        });
+
+        // Clic en dehors pour fermer
+        document.addEventListener('click', e => {
+          if (profileMenu && !profileMenu.contains(e.target) &&
+              profileBtn && !profileBtn.contains(e.target)) {
+            profileMenu.classList.add('hidden');
+          }
+        });
+
+        // Confettis
+        function createConfetti() {
+          const colors = ['#FF7900','#E56E00','#000000','#333333','#FF9E42'];
+          const rect   = profileBtn.getBoundingClientRect();
+
+          for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+
+            // Position aléatoire
+            const x = rect.left + rect.width/2 - 5 + (Math.random()*80 - 40);
+            const y = rect.top  + rect.height/2 - 5 + (Math.random()*20 - 10);
+            confetti.style.left = x + 'px';
+            confetti.style.top  = y + 'px';
+
+            // Taille & couleur & durée
+            confetti.style.backgroundColor  = colors[Math.floor(Math.random()*colors.length)];
+            const size = Math.random()*10 + 5;
+            confetti.style.width  = size + 'px';
+            confetti.style.height = size + 'px';
+            const duration = Math.random()*3 + 2;
+            confetti.style.animationDuration = duration + 's';
+
+            document.body.appendChild(confetti);
+            setTimeout(() => confetti.remove(), duration*1000);
+          }
+        }
+      }
+
+      {% block chart_js %}
+      // Initialisation des graphiques (peut être surchargé dans les pages enfants)
+      {% endblock %}
+    });
+  </script>
+
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

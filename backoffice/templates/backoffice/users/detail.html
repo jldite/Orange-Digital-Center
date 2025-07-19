@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tableau de Bord | Orange Digital Center</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'orange-primary': '#FF7900',
+                        'orange-dark': '#E56E00',
+                        'orange-light': '#FF9E42',
+                        'black-primary': '#000000',
+                        'gray-dark': '#333333',
+                        'gray-light': '#F5F5F5'
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-out forwards',
+                        'scale-in': 'scaleIn 0.3s ease-out forwards',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: 0 },
+                            '100%': { opacity: 1 }
+                        },
+                        scaleIn: {
+                            '0%': { transform: 'scale(0.95)', opacity: 0 },
+                            '100%': { transform: 'scale(1)', opacity: 1 }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f5f7fa;
+            overflow-x: hidden;
+        }
+
+        .sidebar-gradient {
+            background: linear-gradient(to bottom, #000000, #1a1a1a);
+        }
+
+        .profile-shadow {
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .nav-link {
+            transition: all 0.3s ease;
+        }
+
+        .nav-link:hover {
+            transform: translateX(5px);
+            background: rgba(255, 121, 0, 0.15);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .file-upload input {
+            position: absolute;
+            top: 0;
+            right: 0;
+            margin: 0;
+            padding: 0;
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0;
+            height: 100%;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex">
+    <!-- Sidebar -->
+    <div class="sidebar-gradient text-white w-64 min-h-screen p-6 hidden md:flex flex-col">
+        <!-- Logo -->
+        <div class="text-center py-6 border-b border-gray-700">
+            <h1 class="text-2xl font-bold">
+                <span class="text-orange-primary">Orange</span>
+                <span class="text-white">Digital Center</span>
+            </h1>
+        </div>
+
+        <!-- Profil -->
+        <div class="flex flex-col items-center py-8 border-b border-gray-700">
+            <div class="w-24 h-24 rounded-full border-3 border-orange-primary bg-gray-200 flex items-center justify-center mb-4">
+                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80"
+                     alt="Profile" class="w-full h-full rounded-full object-cover">
+            </div>
+            <h2 class="text-xl font-semibold">Edward Lany</h2>
+            <p class="text-orange-light text-sm">Senior Designer</p>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 py-6 space-y-2">
+            <a href="#" class="nav-link flex items-center py-3 px-4 rounded-lg text-gray-300 hover:text-white">
+                <i class="fas fa-home mr-3 text-lg"></i>
+                Tableau de bord
+            </a>
+            <a href="#" class="nav-link flex items-center py-3 px-4 rounded-lg text-gray-300 hover:text-white">
+                <i class="fas fa-calendar mr-3 text-lg"></i>
+                Événements
+            </a>
+            <a href="#" class="nav-link flex items-center py-3 px-4 rounded-lg text-gray-300 hover:text-white">
+                <i class="fas fa-users mr-3 text-lg"></i>
+                Participants
+            </a>
+            <a href="#" class="nav-link flex items-center py-3 px-4 rounded-lg text-gray-300 hover:text-white">
+                <i class="fas fa-chart-bar mr-3 text-lg"></i>
+                Rapports
+            </a>
+        </nav>
+
+        <!-- Copyright -->
+        <div class="py-6 text-center text-gray-500 text-sm border-t border-gray-700">
+            © 2023 Orange Digital Center
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 min-h-screen flex flex-col">
+        <!-- Top Bar -->
+        <div class="bg-white p-4 shadow flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold text-black-primary">Tableau de Bord</h1>
+                <p class="text-gray-500">Bienvenue dans votre espace d'administration</p>
+            </div>
+
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <input type="text" placeholder="Rechercher..." class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent">
+                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                </div>
+
+                <button class="relative p-2 text-gray-500 hover:text-gray-700">
+                    <i class="fas fa-bell"></i>
+                    <span class="absolute top-0 right-0 bg-orange-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+                </button>
+
+                <div class="flex items-center relative">
+                    <button id="profile-btn" class="flex items-center focus:outline-none">
+                        <div class="w-10 h-10 rounded-full border-2 border-orange-primary bg-gray-200 flex items-center justify-center">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80"
+                                 alt="Profile" class="w-full h-full rounded-full object-cover">
+                        </div>
+                        <span class="ml-2 font-medium">Edward Lany</span>
+                        <i class="fas fa-chevron-down ml-2 text-sm text-gray-500"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Content -->
+        <div class="flex-1 p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Stat Card 1 -->
+            <div class="bg-white rounded-xl p-6 card-hover">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-gray-500">Participants totaux</p>
+                        <h3 class="text-3xl font-bold mt-2">1,248</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-orange-primary/10 flex items-center justify-center">
+                        <i class="fas fa-users text-orange-primary text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center text-green-500">
+                        <i class="fas fa-arrow-up mr-2"></i>
+                        <span>12.5% depuis le mois dernier</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stat Card 2 -->
+            <div class="bg-white rounded-xl p-6 card-hover">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-gray-500">Événements à venir</p>
+                        <h3 class="text-3xl font-bold mt-2">12</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-orange-primary/10 flex items-center justify-center">
+                        <i class="fas fa-calendar text-orange-primary text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center text-orange-primary">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <span>3 événements cette semaine</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stat Card 3 -->
+            <div class="bg-white rounded-xl p-6 card-hover">
+                <div class="flex justify-between items-center">
+                    <div>
+                        <p class="text-gray-500">Taux de participation</p>
+                        <h3 class="text-3xl font-bold mt-2">78%</h3>
+                    </div>
+                    <div class="w-12 h-12 rounded-full bg-orange-primary/10 flex items-center justify-center">
+                        <i class="fas fa-chart-pie text-orange-primary text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <div class="flex items-center text-blue-500">
+                        <i class="fas fa-arrow-up mr-2"></i>
+                        <span>8% depuis le dernier trimestre</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Graphique -->
+            <div class="bg-white rounded-xl p-6 md:col-span-2 card-hover">
+                <h3 class="text-lg font-bold text-black-primary mb-4">Participation aux événements</h3>
+                <div class="h-64">
+                    <canvas id="participationChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Derniers événements -->
+            <div class="bg-white rounded-xl p-6 card-hover">
+                <h3 class="text-lg font-bold text-black-primary mb-4">Derniers événements</h3>
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 rounded-md bg-orange-primary/10 flex items-center justify-center mr-3">
+                            <i class="fas fa-laptop-code text-orange-primary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Atelier IA</h4>
+                            <p class="text-sm text-gray-500">15 Sept. 2023</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 rounded-md bg-orange-primary/10 flex items-center justify-center mr-3">
+                            <i class="fas fa-mobile-alt text-orange-primary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Développement Mobile</h4>
+                            <p class="text-sm text-gray-500">20 Sept. 2023</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 rounded-md bg-orange-primary/10 flex items-center justify-center mr-3">
+                            <i class="fas fa-shield-alt text-orange-primary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Cybersécurité</h4>
+                            <p class="text-sm text-gray-500">25 Sept. 2023</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start">
+                        <div class="w-10 h-10 rounded-md bg-orange-primary/10 flex items-center justify-center mr-3">
+                            <i class="fas fa-cloud text-orange-primary"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-semibold">Cloud Computing</h4>
+                            <p class="text-sm text-gray-500">30 Sept. 2023</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Edit Modal -->
+    <div id="profile-modal" class="fixed inset-0 z-50 flex items-center justify-center hidden">
+        <div class="modal-overlay absolute inset-0 animate-fade-in"></div>
+
+        <div class="bg-white rounded-xl w-full max-w-md z-10 animate-scale-in">
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-gray-200">
+                <div class="flex justify-between items-center">
+                    <h2 class="text-xl font-bold text-black-primary">Éditer le Profil</h2>
+                    <button id="close-modal" class="text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Modal Content -->
+            <div class="p-6">
+                <!-- Profile Image Upload -->
+                <div class="flex justify-center mb-6">
+                    <div class="relative">
+                        <div class="w-24 h-24 rounded-full overflow-hidden border-4 border-orange-primary">
+                            <img id="profile-image" src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80"
+                                 alt="Profile" class="w-full h-full object-cover">
+                        </div>
+                        <div class="file-upload absolute bottom-0 right-0 bg-orange-primary rounded-full p-2 cursor-pointer">
+                            <i class="fas fa-camera text-white"></i>
+                            <input type="file" id="profile-upload" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- User Info -->
+                <div class="text-center mb-6">
+                    <h3 class="text-lg font-bold text-black-primary">Edward Lany</h3>
+                    <p class="text-gray-500">Senior Designer</p>
+                </div>
+
+                <!-- Form Fields -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Email Address</label>
+                        <input type="email"
+                               class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-primary"
+                               value="edwardlany@email.com">
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Username</label>
+                        <input type="text"
+                               class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-primary"
+                               value="@EdLarry">
+                    </div>
+
+                    <div>
+                        <label class="block text-gray-700 font-medium mb-2">Password</label>
+                        <div class="relative">
+                            <input type="password"
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-primary pr-12"
+                                   value="********">
+                            <button id="password-toggle" class="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <p class="mt-2 text-sm text-orange-primary">
+                            <i class="fas fa-info-circle mr-1"></i> Password should contain at least 8 characters!
+                        </p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">
+                                Birth Date <span class="text-gray-500 font-normal">(Optional)</span>
+                            </label>
+                            <input type="date"
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-primary"
+                                   value="1994-09-14">
+                        </div>
+
+                        <div>
+                            <label class="block text-gray-700 font-medium mb-2">Start Date</label>
+                            <input type="date"
+                                   class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:border-orange-primary"
+                                   value="2020-01-21">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+                <button id="cancel-btn" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50">
+                    Annuler
+                </button>
+                <button id="save-btn" class="px-4 py-2 bg-orange-primary text-white rounded-lg hover:bg-orange-dark">
+                    Enregistrer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Chart.js for dashboard chart
+        document.addEventListener('DOMContentLoaded', function() {
+            // Participation chart
+            const ctx = document.getElementById('participationChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Juin', 'Juil', 'Août', 'Sept'],
+                    datasets: [{
+                        label: 'Participants',
+                        data: [120, 190, 150, 220, 180, 210, 240, 200, 180],
+                        backgroundColor: '#FF7900',
+                        borderColor: '#E56E00',
+                        borderWidth: 1,
+                        borderRadius: 6,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                drawBorder: false
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // Modal functionality
+            const modal = document.getElementById('profile-modal');
+            const openModalBtn = document.getElementById('profile-btn');
+            const editProfileLink = document.getElementById('edit-profile-link');
+            const closeModalBtn = document.getElementById('close-modal');
+            const cancelBtn = document.getElementById('cancel-btn');
+
+            function openModal() {
+                modal.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            }
+
+            function closeModal() {
+                modal.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+            }
+
+            // Ouvrir la modale quand on clique sur le profil en haut à droite
+            openModalBtn.addEventListener('click', openModal);
+
+            // Ouvrir la modale quand on clique sur "Éditer le profil" dans la sidebar
+            editProfileLink.addEventListener('click', openModal);
+
+            // Fermer la modale avec les boutons
+            closeModalBtn.addEventListener('click', closeModal);
+            cancelBtn.addEventListener('click', closeModal);
+
+            // Fermer la modale quand on clique en dehors
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Profile image upload
+            const profileUpload = document.getElementById('profile-upload');
+            const profileImage = document.getElementById('profile-image');
+
+            profileUpload.addEventListener('change', function(e) {
+                if (this.files && this.files[0]) {
+                    const reader = new FileReader();
+
+                    reader.onload = function(e) {
+                        profileImage.src = e.target.result;
+                    }
+
+                    reader.readAsDataURL(this.files[0]);
+                }
+            });
+
+            // Password visibility toggle
+            const passwordToggle = document.getElementById('password-toggle');
+            passwordToggle.addEventListener('click', function() {
+                const passwordInput = this.parentElement.previousElementSibling;
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    this.innerHTML = '<i class="fas fa-eye-slash"></i>';
+                } else {
+                    passwordInput.type = 'password';
+                    this.innerHTML = '<i class="fas fa-eye"></i>';
+                }
+            });
+
+            // Save button animation
+            const saveBtn = document.getElementById('save-btn');
+            saveBtn.addEventListener('click', function() {
+                // Change button text and color
+                saveBtn.textContent = 'Enregistrement...';
+                saveBtn.disabled = true;
+
+                // Simulate saving
+                setTimeout(() => {
+                    saveBtn.textContent = 'Enregistré ✓';
+                    saveBtn.classList.remove('bg-orange-primary');
+                    saveBtn.classList.add('bg-green-500');
+
+                    // Close modal after 1 second
+                    setTimeout(() => {
+                        closeModal();
+
+                        // Reset button after closing modal
+                        setTimeout(() => {
+                            saveBtn.textContent = 'Enregistrer';
+                            saveBtn.disabled = false;
+                            saveBtn.classList.remove('bg-green-500');
+                            saveBtn.classList.add('bg-orange-primary');
+                        }, 300);
+                    }, 1000);
+                }, 1000);
+            });
+        });
+    </script>
+</body>
+</html>
