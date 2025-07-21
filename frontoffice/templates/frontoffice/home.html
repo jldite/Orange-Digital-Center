@@ -15,6 +15,21 @@
                         'odc-orange': '#FF7900',
                         'odc-black': '#000000',
                         'odc-dark': '#1E1E1E',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in forwards',
+                        'slide-up': 'slideUp 0.8s ease-out forwards',
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' }
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' }
+                        }
                     }
                 }
             }
@@ -24,6 +39,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
         body {
             font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
         }
         .hero-bg {
             background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1950&q=80');
@@ -34,6 +50,46 @@
             transform: translateY(-5px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
         }
+        .odc-logo-text {
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            letter-spacing: 1px;
+            line-height: 1.1;
+        }
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .user-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 0 3px rgba(255, 121, 0, 0.3);
+        }
+        .dropdown-menu {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+        .dropdown-menu.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        .mobile-menu {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+        }
+        .mobile-menu.open {
+            max-height: 500px;
+        }
     </style>
 </head>
 <body class="bg-odc-dark text-white">
@@ -41,41 +97,122 @@
     <nav class="bg-odc-black py-4 px-6 flex justify-between items-center sticky top-0 z-50">
         <div class="flex items-center">
             <img src="{% static 'images/logo.png' %}" alt="Logo Orange" class="h-12">
-            <span class="ml-3 text-xl font-bold">ORANGE DIGITAL CENTER</span>
+            <div class="ml-3 odc-logo-text">
+                <div class="text-lg font-bold leading-tight text-odc-orange">ORANGE</div>
+                <div class="text-lg font-bold leading-tight">DIGITAL CENTER</div>
+            </div>
         </div>
 
-        <div class="hidden md:flex space-x-8">
+        <!-- Menu Desktop -->
+        <div class="hidden md:flex space-x-8 items-center">
             <a href="#" class="hover:text-odc-orange transition">Accueil</a>
             <a href="#" class="hover:text-odc-orange transition">Événements</a>
             <a href="#" class="hover:text-odc-orange transition">Formations</a>
             <a href="#" class="hover:text-odc-orange transition">FabLab</a>
             <a href="#" class="hover:text-odc-orange transition">Contact</a>
+
+            <!-- Menu Utilisateur Connecté -->
+            {% if user.is_authenticated %}
+            <div class="relative ml-4">
+                <div class="user-avatar bg-odc-orange text-white" id="userMenuButton">
+                    {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
+                </div>
+
+                <div class="dropdown-menu absolute right-0 mt-2 w-56 bg-odc-dark rounded-lg shadow-lg py-2 z-50 border border-gray-700" id="userDropdown">
+                    <div class="px-4 py-3 border-b border-gray-700">
+                        <p class="text-sm">Bienvenue</p>
+                        <p class="font-medium">@{{ user.username }}</p>
+                    </div>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-800 transition flex items-center">
+                        <i class="fas fa-user-circle mr-3"></i>User Profile
+                    </a>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-800 transition flex items-center">
+                        <i class="fas fa-shield-alt mr-3"></i>Privacy and Safety
+                    </a>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-800 transition flex items-center">
+                        <i class="fas fa-cog mr-3"></i>Settings
+                    </a>
+                    <a href="{% url 'frontoffice:logout' %}" class="block px-4 py-2 hover:bg-gray-800 transition flex items-center">
+                        <i class="fas fa-sign-out-alt mr-3"></i>Sign Out
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <a href="{% url 'frontoffice:login' %}" class="bg-odc-orange px-6 py-2 rounded-full font-medium hover:bg-orange-700 transition">
+                Connexion
+            </a>
+            {% endif %}
         </div>
 
-        <div>
-            <a href="{% url 'frontoffice:login' %}" class="bg-odc-orange px-6 py-2 rounded-full font-medium hover:bg-orange-700 transition">Connexion</a>
+        <!-- Menu Mobile -->
+        <div class="md:hidden flex items-center">
+            {% if user.is_authenticated %}
+            <div class="relative mr-4">
+                <div class="user-avatar bg-odc-orange text-white" id="mobileUserMenuButton">
+                    {{ user.first_name|slice:":1" }}{{ user.last_name|slice:":1" }}
+                </div>
+
+                <div class="dropdown-menu absolute right-0 mt-2 w-56 bg-odc-dark rounded-lg shadow-lg py-2 z-50 border border-gray-700" id="mobileUserDropdown">
+                    <div class="px-4 py-3 border-b border-gray-700">
+                        <p class="text-sm">Bienvenue</p>
+                        <p class="font-medium">@{{ user.username }}</p>
+                    </div>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-800 transition flex items-center">
+                        <i class="fas fa-user-circle mr-3"></i>User Profile
+                    </a>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-800 transition flex items-center">
+                        <i class="fas fa-shield-alt mr-3"></i>Privacy and Safety
+                    </a>
+                    <a href="#" class="block px-4 py-2 hover:bg-gray-800 transition flex items-center">
+                        <i class="fas fa-cog mr-3"></i>Settings
+                    </a>
+                    <a href="{% url 'frontoffice:logout' %}" class="block px-4 py-2 hover:bg-gray-800 transition flex items-center">
+                        <i class="fas fa-sign-out-alt mr-3"></i>Sign Out
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <a href="{% url 'frontoffice:login' %}" class="bg-odc-orange px-4 py-2 rounded-full font-medium hover:bg-orange-700 transition text-sm">
+                Connexion
+            </a>
+            {% endif %}
+
+            <button id="mobileMenuButton" class="ml-4 text-white focus:outline-none">
+                <i class="fas fa-bars text-xl"></i>
+            </button>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero-bg min-h-screen flex items-center">
+    <!-- Menu Mobile Dropdown -->
+    <div class="mobile-menu bg-odc-black md:hidden" id="mobileMenu">
+        <div class="px-6 py-4 space-y-4">
+            <a href="#" class="block hover:text-odc-orange transition">Accueil</a>
+            <a href="#" class="block hover:text-odc-orange transition">Événements</a>
+            <a href="#" class="block hover:text-odc-orange transition">Formations</a>
+            <a href="#" class="block hover:text-odc-orange transition">FabLab</a>
+            <a href="#" class="block hover:text-odc-orange transition">Contact</a>
+        </div>
+    </div>
+
+    <!-- Hero Section avec animation -->
+    <section class="hero-bg min-h-screen flex items-center animate-fade-in">
         <div class="container mx-auto px-6 text-center">
-            <h1 class="text-5xl md:text-7xl font-bold mb-6">INNOVATION & DIGITAL SKILLS</h1>
-            <p class="text-xl max-w-2xl mx-auto mb-10">
+            <h1 class="text-5xl md:text-7xl font-bold mb-6 animate-slide-up" style="animation-delay: 0.2s">INNOVATION & DIGITAL SKILLS</h1>
+            <p class="text-xl max-w-2xl mx-auto mb-10 animate-slide-up" style="animation-delay: 0.4s">
                 Découvrez notre espace dédié à l'innovation numérique et au développement des compétences digitales
             </p>
-            <div class="flex justify-center gap-4">
+            <div class="flex flex-col sm:flex-row justify-center gap-4 animate-slide-up" style="animation-delay: 0.6s">
                 <a href="#events" class="bg-odc-orange px-8 py-4 rounded-full text-lg font-semibold hover:bg-orange-700 transition">Voir les événements</a>
                 <a href="#" class="border-2 border-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-white hover:text-black transition">S'inscrire</a>
             </div>
         </div>
     </section>
 
-    <!-- À propos -->
+    <!-- À propos avec animation -->
     <section class="py-20 bg-odc-black">
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-16 items-center">
-                <div>
+                <div class="animate-fade-in" style="animation-delay: 0.2s">
                     <h2 class="text-4xl font-bold mb-6">QUI SOMMES-NOUS ?</h2>
                     <p class="text-lg mb-6">
                         Orange Digital Center est un réseau d'espaces physiques et virtuels qui s'adresse aux jeunes,
@@ -83,25 +220,25 @@
                         l'opportunité de développer leurs compétences numériques.
                     </p>
                     <div class="grid grid-cols-2 gap-6">
-                        <div class="flex items-center">
+                        <div class="flex items-center animate-slide-up" style="animation-delay: 0.3s">
                             <div class="bg-odc-orange rounded-full p-3 mr-4">
                                 <i class="fas fa-graduation-cap text-2xl"></i>
                             </div>
                             <span>Formations gratuites</span>
                         </div>
-                        <div class="flex items-center">
+                        <div class="flex items-center animate-slide-up" style="animation-delay: 0.4s">
                             <div class="bg-odc-orange rounded-full p-3 mr-4">
                                 <i class="fas fa-laptop-code text-2xl"></i>
                             </div>
                             <span>Accès aux FabLabs</span>
                         </div>
-                        <div class="flex items-center">
+                        <div class="flex items-center animate-slide-up" style="animation-delay: 0.5s">
                             <div class="bg-odc-orange rounded-full p-3 mr-4">
                                 <i class="fas fa-lightbulb text-2xl"></i>
                             </div>
                             <span>Accompagnement startups</span>
                         </div>
-                        <div class="flex items-center">
+                        <div class="flex items-center animate-slide-up" style="animation-delay: 0.6s">
                             <div class="bg-odc-orange rounded-full p-3 mr-4">
                                 <i class="fas fa-users text-2xl"></i>
                             </div>
@@ -110,26 +247,26 @@
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4">
-                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Formation" class="rounded-lg h-64 w-full object-cover">
-                    <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="FabLab" class="rounded-lg h-64 w-full object-cover">
-                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Startup" class="rounded-lg h-64 w-full object-cover mt-8">
-                    <img src="https://images.unsplash.com/photo-1495465798138-718f86d1a98f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Conférence" class="rounded-lg h-64 w-full object-cover mt-8">
+                    <img src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Formation" class="rounded-lg h-64 w-full object-cover animate-slide-up" style="animation-delay: 0.3s">
+                    <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="FabLab" class="rounded-lg h-64 w-full object-cover animate-slide-up" style="animation-delay: 0.4s">
+                    <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Startup" class="rounded-lg h-64 w-full object-cover mt-8 animate-slide-up" style="animation-delay: 0.5s">
+                    <img src="https://images.unsplash.com/photo-1495465798138-718f86d1a98f?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Conférence" class="rounded-lg h-64 w-full object-cover mt-8 animate-slide-up" style="animation-delay: 0.6s">
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Événements à venir -->
+    <!-- Événements à venir avec animation -->
     <section id="events" class="py-20 bg-odc-dark">
         <div class="container mx-auto px-6">
-            <div class="text-center mb-16">
+            <div class="text-center mb-16 animate-fade-in">
                 <h2 class="text-4xl font-bold mb-4">ÉVÉNEMENTS À VENIR</h2>
                 <div class="w-20 h-1 bg-odc-orange mx-auto"></div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <!-- Événement 1 -->
-                <div class="bg-odc-black rounded-xl overflow-hidden event-card transition-all duration-300">
+                <div class="bg-odc-black rounded-xl overflow-hidden event-card transition-all duration-300 animate-slide-up" style="animation-delay: 0.2s">
                     <img src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Atelier IA" class="w-full h-48 object-cover">
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-4">
@@ -153,7 +290,7 @@
                 </div>
 
                 <!-- Événement 2 -->
-                <div class="bg-odc-black rounded-xl overflow-hidden event-card transition-all duration-300">
+                <div class="bg-odc-black rounded-xl overflow-hidden event-card transition-all duration-300 animate-slide-up" style="animation-delay: 0.4s">
                     <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="FabLab" class="w-full h-48 object-cover">
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-4">
@@ -177,7 +314,7 @@
                 </div>
 
                 <!-- Événement 3 -->
-                <div class="bg-odc-black rounded-xl overflow-hidden event-card transition-all duration-300">
+                <div class="bg-odc-black rounded-xl overflow-hidden event-card transition-all duration-300 animate-slide-up" style="animation-delay: 0.6s">
                     <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" alt="Startup" class="w-full h-48 object-cover">
                     <div class="p-6">
                         <div class="flex justify-between items-start mb-4">
@@ -201,7 +338,7 @@
                 </div>
             </div>
 
-            <div class="text-center mt-12">
+            <div class="text-center mt-12 animate-fade-in">
                 <a href="#" class="border-2 border-odc-orange text-odc-orange px-8 py-3 rounded-full font-medium hover:bg-odc-orange hover:text-white transition">
                     Voir tous les événements
                 </a>
@@ -209,16 +346,16 @@
         </div>
     </section>
 
-    <!-- Formations -->
+    <!-- Formations avec animation -->
     <section class="py-20 bg-odc-black">
         <div class="container mx-auto px-6">
-            <div class="text-center mb-16">
+            <div class="text-center mb-16 animate-fade-in">
                 <h2 class="text-4xl font-bold mb-4">NOS FORMATIONS</h2>
                 <div class="w-20 h-1 bg-odc-orange mx-auto"></div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <div class="bg-odc-dark p-8 rounded-xl text-center hover:bg-orange-900 transition">
+                <div class="bg-odc-dark p-8 rounded-xl text-center hover:bg-orange-900 transition animate-slide-up" style="animation-delay: 0.2s">
                     <div class="bg-odc-orange w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-code text-2xl"></i>
                     </div>
@@ -226,7 +363,7 @@
                     <p class="text-gray-300">HTML, CSS, JavaScript, React, Node.js</p>
                 </div>
 
-                <div class="bg-odc-dark p-8 rounded-xl text-center hover:bg-orange-900 transition">
+                <div class="bg-odc-dark p-8 rounded-xl text-center hover:bg-orange-900 transition animate-slide-up" style="animation-delay: 0.3s">
                     <div class="bg-odc-orange w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-mobile-alt text-2xl"></i>
                     </div>
@@ -234,7 +371,7 @@
                     <p class="text-gray-300">Android, iOS, Flutter, React Native</p>
                 </div>
 
-                <div class="bg-odc-dark p-8 rounded-xl text-center hover:bg-orange-900 transition">
+                <div class="bg-odc-dark p-8 rounded-xl text-center hover:bg-orange-900 transition animate-slide-up" style="animation-delay: 0.4s">
                     <div class="bg-odc-orange w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-brain text-2xl"></i>
                     </div>
@@ -242,7 +379,7 @@
                     <p class="text-gray-300">Python, Machine Learning, Deep Learning</p>
                 </div>
 
-                <div class="bg-odc-dark p-8 rounded-xl text-center hover:bg-orange-900 transition">
+                <div class="bg-odc-dark p-8 rounded-xl text-center hover:bg-orange-900 transition animate-slide-up" style="animation-delay: 0.5s">
                     <div class="bg-odc-orange w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i class="fas fa-shield-alt text-2xl"></i>
                     </div>
@@ -253,14 +390,14 @@
         </div>
     </section>
 
-    <!-- CTA Inscription -->
-    <section class="py-20 bg-odc-orange">
+    <!-- CTA Inscription avec animation -->
+    <section class="py-20 bg-odc-orange animate-pulse-slow">
         <div class="container mx-auto px-6 text-center">
-            <h2 class="text-4xl font-bold mb-6">PRÊT À REJOINDRE L'AVENTURE ?</h2>
-            <p class="text-xl max-w-2xl mx-auto mb-10">
+            <h2 class="text-4xl font-bold mb-6 animate-slide-up">PRÊT À REJOINDRE L'AVENTURE ?</h2>
+            <p class="text-xl max-w-2xl mx-auto mb-10 animate-slide-up">
                 Inscrivez-vous gratuitement pour accéder à toutes nos formations, événements et ressources
             </p>
-            <a href="{% url 'frontoffice:register' %}" class="bg-black text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-gray-900 transition">
+            <a href="#" class="bg-black text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-gray-900 transition animate-slide-up">
                 Créer un compte
             </a>
         </div>
@@ -271,7 +408,13 @@
         <div class="container mx-auto px-6">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
-                    <img src="{% static 'images/logo.png' %}" alt="Logo Orange" class="h-12 mb-4">
+                    <div class="flex items-center mb-4">
+                        <img src="{% static 'images/logo.png' %}" alt="Logo Orange" class="h-10">
+                        <div class="ml-3 odc-logo-text">
+                            <div class="text-base font-bold leading-tight text-odc-orange">ORANGE</div>
+                            <div class="text-base font-bold leading-tight">DIGITAL CENTER</div>
+                        </div>
+                    </div>
                     <p class="text-gray-400">
                         Transformer l'innovation numérique en opportunités pour tous.
                     </p>
@@ -329,5 +472,72 @@
             </div>
         </div>
     </footer>
+
+    <script>
+        // Menu utilisateur desktop
+        const userMenuButton = document.getElementById('userMenuButton');
+        const userDropdown = document.getElementById('userDropdown');
+
+        if (userMenuButton) {
+            userMenuButton.addEventListener('click', () => {
+                userDropdown.classList.toggle('open');
+            });
+
+            // Fermer le menu quand on clique ailleurs
+            document.addEventListener('click', (e) => {
+                if (!userMenuButton.contains(e.target) && !userDropdown.contains(e.target)) {
+                    userDropdown.classList.remove('open');
+                }
+            });
+        }
+
+        // Menu utilisateur mobile
+        const mobileUserMenuButton = document.getElementById('mobileUserMenuButton');
+        const mobileUserDropdown = document.getElementById('mobileUserDropdown');
+
+        if (mobileUserMenuButton) {
+            mobileUserMenuButton.addEventListener('click', () => {
+                mobileUserDropdown.classList.toggle('open');
+            });
+
+            // Fermer le menu quand on clique ailleurs
+            document.addEventListener('click', (e) => {
+                if (!mobileUserMenuButton.contains(e.target) && !mobileUserDropdown.contains(e.target)) {
+                    mobileUserDropdown.classList.remove('open');
+                }
+            });
+        }
+
+        // Menu mobile
+        const mobileMenuButton = document.getElementById('mobileMenuButton');
+        const mobileMenu = document.getElementById('mobileMenu');
+
+        if (mobileMenuButton) {
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('open');
+                mobileMenuButton.innerHTML = mobileMenu.classList.contains('open') ?
+                    '<i class="fas fa-times text-xl"></i>' :
+                    '<i class="fas fa-bars text-xl"></i>';
+            });
+        }
+
+        // Animation au défilement
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.animate-fade-in, .animate-slide-up');
+
+            elements.forEach(el => {
+                const elementTop = el.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+
+                if (elementTop < windowHeight - 100) {
+                    el.style.opacity = 1;
+                }
+            });
+        };
+
+        // Initialisation
+        window.addEventListener('load', animateOnScroll);
+        window.addEventListener('scroll', animateOnScroll);
+    </script>
 </body>
 </html>
