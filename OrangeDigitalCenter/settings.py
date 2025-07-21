@@ -34,13 +34,13 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'frontoffice',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'frontoffice',
     'events',
     'applications',
     'reporting',
@@ -121,16 +121,10 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-LOGIN_URL = 'login' #nom de la vue de login
 
-LOGIN_REDIRECT_URL = 'home' # vue "home" par defaut pour frontoffice non-admin
+AUTH_USER_MODEL ='frontoffice.CustomUser'
 
-LOGOUT_REDIRECT_URL = 'home'
-AUTH_USER_MODEL = 'frontoffice.CustomUser'
-LOGOUT_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/frontoffice/login/'
-# URL de la page de connexion
-LOGIN_URL = '/backoffice/login/'
+LOGIN_URL ='/backoffice/login/'
 # Redirection après connexion
 LOGIN_REDIRECT_URL = '/backoffice/dashboard/'
 # Redirection après déconnexion
@@ -141,8 +135,6 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-# Modèle utilisateur personnalisé
-AUTH_USER_MODEL = 'frontoffice.CustomUser'
 
 STATICFILES_DIRS = [
     BASE_DIR / "static",
