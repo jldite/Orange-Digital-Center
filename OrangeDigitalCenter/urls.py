@@ -20,7 +20,7 @@ from django.views.generic import RedirectView
 from backoffice.views import home_view
 
 urlpatterns = [
-    path('', include('frontoffice.urls')),
+    path('', include('frontoffice.urls', namespace='frontoffice')),
     path('backoffice/', include('backoffice.urls')),
     path('admin-login/', RedirectView.as_view(url='/backoffice/login/')),
 ]

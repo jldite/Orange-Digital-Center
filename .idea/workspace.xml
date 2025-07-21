@@ -5,15 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3218b3e5-496f-4f32-9bbf-4939f9b39d73" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/OrangeDigitalCenter/admin.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontoffice/migrations/0001_initial.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/frontoffice/migrations/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/OrangeDigitalCenter/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/OrangeDigitalCenter/settings.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/events/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/events/migrations/__init__.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/events/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/events/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontoffice/migrations/0001_initial.py" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontoffice/migrations/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/OrangeDigitalCenter/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/OrangeDigitalCenter/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/applications/migrations/0001_initial.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/attendance/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/attendance/migrations/0001_initial.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontoffice/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/frontoffice/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontoffice/templates/frontoffice/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontoffice/templates/frontoffice/home.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontoffice/templates/frontoffice/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontoffice/templates/frontoffice/login.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontoffice/templates/frontoffice/registration.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontoffice/templates/frontoffice/registration.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontoffice/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/frontoffice/urls.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -40,19 +43,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "Python.manage.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "last_opened_file_path": "C:/Users/KALI/PycharmProjects/OrangeDigitalCenter",
-    "settings.editor.selected.configurable": "preferences.pluginManager"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;Python.manage.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/KALI/PycharmProjects/OrangeDigitalCenter/frontoffice/migrations&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\KALI\PycharmProjects\OrangeDigitalCenter\frontoffice\migrations" />
+      <recent name="C:\Users\KALI\PycharmProjects\OrangeDigitalCenter\events\migrations" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\KALI\PycharmProjects\OrangeDigitalCenter\frontoffice\templates\frontoffice" />
       <recent name="C:\Users\KALI\PycharmProjects\OrangeDigitalCenter\static" />
