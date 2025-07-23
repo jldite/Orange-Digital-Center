@@ -172,7 +172,7 @@
                 </div>
             </div>
             {% else %}
-            <a href="{% url 'frontoffice:login' %}" class="bg-odc-orange px-4 py-2 rounded-full font-medium hover:bg-orange-700 transition text-sm">
+            <a href="{% url 'backoffice:login' %}" class="bg-odc-orange px-4 py-2 rounded-full font-medium hover:bg-orange-700 transition text-sm">
                 Connexion
             </a>
             {% endif %}
@@ -397,7 +397,7 @@
             <p class="text-xl max-w-2xl mx-auto mb-10 animate-slide-up">
                 Inscrivez-vous gratuitement pour accéder à toutes nos formations, événements et ressources
             </p>
-            <a href="#" class="bg-black text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-gray-900 transition animate-slide-up">
+            <a href="{% url 'frontoffice:register' %}" class="bg-black text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-gray-900 transition animate-slide-up">
                 Créer un compte
             </a>
         </div>

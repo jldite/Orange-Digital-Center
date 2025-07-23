@@ -15,27 +15,12 @@ def user_register(request):
         if form.is_valid():
             form.save()
             messages.success(request, "Compte créé avec succès. Veuillez vous connecter.")
-            return redirect('login')
+            return redirect('frontoffice:home')
         else:
             messages.error(request, "Veuillez corriger les erreurs.")
     else:
         form = UserCreationForm()
-    return render(request, 'frontoffice/registration.html', {'form': form})
-
-
-def user_login(request):
-    if request.method == 'POST':
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
-            messages.success(request, f"Bienvenue {user.username} !")
-            return redirect('profile')
-        else:
-            messages.error(request, "Nom d'utilisateur ou mot de passe invalide.")
-    else:
-        form = AuthenticationForm()
-    return render(request, 'frontoffice/login.html', {'form': form})
+    return render(request, 'frontoffice/register.html', {'form': form})
 
 
 # Vue de déconnexion

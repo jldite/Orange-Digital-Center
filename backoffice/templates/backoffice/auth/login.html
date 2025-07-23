@@ -337,8 +337,8 @@
                 </div>
                 {% endif %}
 
-                <!-- FORMULAIRE AVEC LE VRAI LIEN DE CONNEXION -->
-                <form method="POST" action="{% url 'backoffice:admin_login' %}" class="space-y-5">
+                <!-- FORMULAIRE -->
+                <form method="POST" action="{% url 'backoffice:login' %}" class="space-y-5">
                     {% csrf_token %}
 
                     <!-- Champ nom d'utilisateur -->

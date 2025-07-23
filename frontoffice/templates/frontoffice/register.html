@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Formulaire d'Inscription</title>
+    <title>Formulaire d'Inscription Compact</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -25,16 +26,14 @@
         }
 
         .container {
-            max-width: 500px;
+            max-width: 380px; /* Réduit de 450px à 380px */
             width: 100%;
-            transform: scale(0.8);
-            transform-origin: center;
         }
 
         .card {
             background: #111;
-            border-radius: 16px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border-radius: 12px; /* Bordure plus petite */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); /* Ombre plus légère */
             border: 1px solid rgba(255, 255, 255, 0.05);
             overflow: hidden;
             position: relative;
@@ -43,51 +42,51 @@
 
         .header {
             text-align: center;
-            padding: 30px 30px 20px;
+            padding: 20px 20px 10px; /* Padding réduit */
         }
 
         .logo {
             background: linear-gradient(135deg, #FF6B00 0%, #FF8C00 100%);
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
+            width: 60px; /* Réduit de 80px */
+            height: 60px; /* Réduit de 80px */
+            border-radius: 15px; /* Bordure plus petite */
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 15px;
-            box-shadow: 0 8px 16px rgba(255, 107, 0, 0.3);
+            margin: 0 auto 10px; /* Marge réduite */
+            box-shadow: 0 5px 10px rgba(255, 107, 0, 0.3); /* Ombre plus légère */
             animation: float 6s ease-in-out infinite;
         }
 
         .logo i {
-            font-size: 2.5rem;
+            font-size: 1.8rem; /* Taille réduite */
             color: #111;
         }
 
         .title {
-            font-size: 2rem;
+            font-size: 1.6rem; /* Réduit de 2rem */
             font-weight: 700;
-            margin-bottom: 8px;
+            margin-bottom: 6px; /* Marge réduite */
         }
 
         .subtitle {
             color: #aaa;
-            font-size: 1rem;
-            margin-bottom: 10px;
+            font-size: 0.9rem; /* Taille réduite */
+            margin-bottom: 8px; /* Marge réduite */
         }
 
         .form-content {
-            padding: 0 30px 30px;
+            padding: 0 25px 20px; /* Padding réduit */
         }
 
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 15px; /* Réduit de 20px */
         }
 
         label {
             display: block;
-            margin-bottom: 8px;
-            font-size: 0.95rem;
+            margin-bottom: 6px; /* Réduit de 8px */
+            font-size: 0.85rem; /* Taille réduite */
             color: #ddd;
         }
 
@@ -97,32 +96,34 @@
 
         .input-icon {
             position: absolute;
-            left: 15px;
+            left: 12px; /* Position ajustée */
             top: 50%;
             transform: translateY(-50%);
             color: #777;
+            font-size: 0.9rem; /* Taille réduite */
         }
 
         .input-field {
             width: 100%;
-            padding: 14px 20px 14px 45px;
-            border-radius: 10px;
+            padding: 10px 15px 10px 38px; /* Padding réduit */
+            border-radius: 8px; /* Bordure plus petite */
             border: 1px solid rgba(255, 255, 255, 0.1);
             background: rgba(30, 30, 30, 0.7);
             color: white;
-            font-size: 1rem;
+            font-size: 0.9rem; /* Taille réduite */
             outline: none;
             transition: all 0.3s ease;
+            height: 42px; /* Hauteur fixe pour uniformité */
         }
 
         .input-field:focus {
             border-color: #FF6B00;
-            box-shadow: 0 0 0 3px rgba(255, 107, 0, 0.3);
+            box-shadow: 0 0 0 2px rgba(255, 107, 0, 0.3); /* Ombre plus légère */
         }
 
         .name-fields {
             display: flex;
-            gap: 15px;
+            gap: 12px; /* Espacement réduit */
         }
 
         .name-fields > div {
@@ -131,32 +132,34 @@
 
         .password-toggle {
             position: absolute;
-            right: 15px;
+            right: 12px; /* Position ajustée */
             top: 50%;
             transform: translateY(-50%);
             color: #777;
             cursor: pointer;
+            font-size: 0.9rem; /* Taille réduite */
         }
 
         .btn-primary {
             background: #FF6B00;
             color: #111;
-            padding: 14px;
+            padding: 12px; /* Réduit de 14px */
             width: 100%;
             border: none;
-            border-radius: 10px;
-            font-size: 1.1rem;
+            border-radius: 8px; /* Bordure plus petite */
+            font-size: 1rem; /* Taille réduite */
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(255, 107, 0, 0.4);
+            box-shadow: 0 3px 10px rgba(255, 107, 0, 0.4); /* Ombre plus légère */
             letter-spacing: 0.5px;
+            height: 46px; /* Hauteur fixe */
         }
 
         .btn-primary:hover {
             background: #FF7F20;
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(255, 107, 0, 0.6);
+            transform: translateY(-2px); /* Effet plus subtil */
+            box-shadow: 0 5px 15px rgba(255, 107, 0, 0.5); /* Ombre plus légère */
         }
 
         .btn-primary:active {
@@ -166,29 +169,29 @@
         .divider {
             height: 1px;
             background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
-            margin: 30px 0;
+            margin: 22px 0; /* Marge réduite */
         }
 
         .social-section {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px; /* Marge réduite */
         }
 
         .social-title {
             color: #aaa;
-            margin-bottom: 15px;
-            font-size: 1rem;
+            margin-bottom: 12px; /* Marge réduite */
+            font-size: 0.9rem; /* Taille réduite */
         }
 
         .social-container {
             display: flex;
             justify-content: center;
-            gap: 15px;
+            gap: 12px; /* Espacement réduit */
         }
 
         .social-btn {
-            width: 45px;
-            height: 45px;
+            width: 38px; /* Réduit de 45px */
+            height: 38px; /* Réduit de 45px */
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -196,26 +199,28 @@
             background: rgba(255, 255, 255, 0.07);
             transition: all 0.3s ease;
             color: white;
+            font-size: 0.9rem; /* Taille réduite */
         }
 
         .social-btn:hover {
             background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-3px);
+            transform: translateY(-2px); /* Effet plus subtil */
         }
 
         .google { color: #DB4437; }
-        .twitter { color: #000; } /* Couleur noire pour le logo X */
+        .twitter { color: #000; }
         .facebook { color: #4267B2; }
         .apple { color: #A2AAAD; }
 
         .login-link {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 15px; /* Marge réduite */
         }
 
         .login-link p {
             color: #aaa;
-            margin-bottom: 8px;
+            margin-bottom: 6px; /* Marge réduite */
+            font-size: 0.9rem; /* Taille réduite */
         }
 
         .login-link a {
@@ -224,14 +229,15 @@
             text-decoration: none;
             position: relative;
             display: inline-block;
+            font-size: 0.9rem; /* Taille réduite */
         }
 
         .login-link a::after {
             content: '';
             position: absolute;
             width: 0;
-            height: 2px;
-            bottom: -2px;
+            height: 1px; /* Ligne plus fine */
+            bottom: -1px;
             left: 0;
             background-color: #FF6B00;
             transition: width 0.3s ease;
@@ -243,16 +249,17 @@
 
         .footer {
             text-align: center;
-            padding: 20px 30px;
+            padding: 15px 25px; /* Padding réduit */
             border-top: 1px solid rgba(255,255,255,0.1);
             color: #777;
-            font-size: 0.85rem;
+            font-size: 0.75rem; /* Taille réduite */
         }
 
         .footer a {
             color: #aaa;
             text-decoration: none;
             transition: color 0.3s ease;
+            font-size: 0.75rem; /* Taille réduite */
         }
 
         .footer a:hover {
@@ -267,7 +274,7 @@
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-8px); } /* Animation plus subtile */
         }
 
         .form-group {
@@ -301,7 +308,7 @@
 
         @keyframes pulse {
             0% { transform: scale(1); opacity: 0.1; }
-            50% { transform: scale(1.1); opacity: 0.2; }
+            50% { transform: scale(1.05); opacity: 0.15; } /* Animation plus subtile */
             100% { transform: scale(1); opacity: 0.1; }
         }
     </style>
@@ -320,54 +327,74 @@
                 <p class="subtitle">Rejoignez-nous dès aujourd'hui</p>
             </div>
 
-            <div class="form-content">
-                <form>
-                    <div class="name-fields">
-                        <div class="form-group">
-                            <label for="prenom">Prénom</label>
-                            <div class="input-container">
-                                <i class="fas fa-user input-icon"></i>
-                                <input type="text" id="prenom" class="input-field" placeholder="Votre prénom" required>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="nom">Nom</label>
-                            <div class="input-container">
-                                <i class="fas fa-user input-icon"></i>
-                                <input type="text" id="nom" class="input-field" placeholder="Votre nom" required>
-                            </div>
-                        </div>
-                    </div>
-
+            <form method="POST"
+                  action="{% url 'frontoffice:register' %}"
+                  id="registrationForm">
+                {% csrf_token %}
+                <!-- Prénom -->
+                <div class="name-fields">
                     <div class="form-group">
-                        <label for="email">Email</label>
+                        <!-- label inchangé -->
+                        <label for="prenom">Prénom</label>
                         <div class="input-container">
-                            <i class="fas fa-envelope input-icon"></i>
-                            <input type="email" id="email" class="input-field" placeholder="votre@email.com" required>
+                            <i class="fas fa-user input-icon"></i>
+                            {{ form.first_name.as_widget(attrs={ 'id': 'prenom', 'class': 'input-field', 'placeholder': 'Votre prénom' }) }}
                         </div>
+                        {% for err in form.first_name.errors %}
+                        <p class="text-red-400 text-sm">{{ err }}</p>
+                        {% endfor %}
                     </div>
-
+                    <!-- Nom -->
                     <div class="form-group">
-                        <label for="password">Mot de passe</label>
+                        <label for="nom">Nom</label>
                         <div class="input-container">
-                            <i class="fas fa-lock input-icon"></i>
-                            <input type="password" id="password" class="input-field" placeholder="••••••••" required>
-                            <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                            <i class="fas fa-user input-icon"></i>
+                            {{ form.last_name.as_widget(attrs={ 'id': 'nom', 'class': 'input-field', 'placeholder': 'Votre nom' }) }}
                         </div>
+                        {% for err in form.last_name.errors %}
+                        <p class="text-red-400 text-sm">{{ err }}</p>
+                        {% endfor %}
                     </div>
-
-                    <div class="form-group">
-                        <label for="confirm-password">Confirmer le mot de passe</label>
-                        <div class="input-container">
-                            <i class="fas fa-lock input-icon"></i>
-                            <input type="password" id="confirm-password" class="input-field" placeholder="••••••••" required>
-                            <i class="fas fa-eye password-toggle" id="toggleConfirmPassword"></i>
-                        </div>
+                </div>
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <div class="input-container">
+                        <i class="fas fa-envelope input-icon"></i>
+                        {{ form.email.as_widget(attrs={ 'id': 'email', 'class': 'input-field', 'placeholder': 'votre@email.com' }) }}
                     </div>
+                    {% for err in form.email.errors %}
+                    <p class="text-red-400 text-sm">{{ err }}</p>
+                    {% endfor %}
+                </div>
+                <!-- Mot de passe -->
+                <div class="form-group">
+                    <label for="password1">Mot de passe</label>
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon"></i>
+                        {{ form.password1.as_widget(attrs={ 'id': 'password', 'class': 'input-field', 'placeholder': '••••••••' }) }}
+                        <i class="fas fa-eye password-toggle" id="togglePassword"></i>
+                    </div>
+                    {% for err in form.password1.errors %}
+                    <p class="text-red-400 text-sm">{{ err }}</p>
+                    {% endfor %}
+                </div>
+                <!-- Confirmation -->
+                <div class="form-group">
+                    <label for="password2">Confirmer le mot de passe</label>
+                    <div class="input-container">
+                        <i class="fas fa-lock input-icon"></i>
+                        {{ form.password2.as_widget(attrs={ 'id': 'confirm-password', 'class': 'input-field', 'placeholder': '••••••••' }) }}
+                        <i class="fas fa-eye password-toggle" id="toggleConfirmPassword"></i>
+                    </div>
+                    {% for err in form.password2.errors %}
+                    <p class="text-red-400 text-sm">{{ err }}</p>
+                    {% endfor %}
+                </div>
+                <!-- Bouton inchangé -->
+                <button type="submit" class="btn-primary">S'inscrire</button>
+            </form>
 
-                    <button type="button" class="btn-primary">S'inscrire</button>
-                </form>
 
                 <div class="divider"></div>
 
@@ -375,9 +402,8 @@
                     <p class="social-title">Ou inscrivez-vous avec</p>
                     <div class="social-container">
                         <a href="#" class="social-btn"><i class="fab fa-google google"></i></a>
-                        <!-- Logo Twitter actuel (logo X) -->
                         <a href="#" class="social-btn">
-                            <svg class="twitter" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                            <svg class="twitter" width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                                 <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
                             </svg>
                         </a>
@@ -388,7 +414,7 @@
 
                 <div class="login-link">
                     <p>Vous avez déjà un compte ?</p>
-                    <a href="{% url 'frontoffice:login' %}">Se connecter</a>
+                    <a href="#">Se connecter</a>
                 </div>
             </div>
 
@@ -397,7 +423,7 @@
                     <a href="#">Termes & Conditions</a> |
                     <a href="#">Politique de confidentialité</a>
                 </p>
-                <p style="margin-top: 8px;">© 2023 Tous droits réservés</p>
+                <p style="margin-top: 6px;">© 2023 Tous droits réservés</p>
             </div>
         </div>
     </div>
@@ -408,12 +434,12 @@
             const bgDots = document.getElementById('bgDots');
             const colors = ['#FF6B00', '#FF8C00', '#FFA500'];
 
-            for (let i = 0; i < 25; i++) {
+            for (let i = 0; i < 20; i++) { // Moins de points pour une apparence plus épurée
                 const dot = document.createElement('div');
                 dot.classList.add('dot');
 
                 // Propriétés aléatoires
-                const size = Math.random() * 15 + 5;
+                const size = Math.random() * 10 + 3; // Points plus petits
                 const posX = Math.random() * 100;
                 const posY = Math.random() * 100;
                 const color = colors[Math.floor(Math.random() * colors.length)];
@@ -458,38 +484,41 @@
                 }
             });
 
-            // Animation du bouton d'inscription
-            const signupBtn = document.querySelector('.btn-primary');
+            // Gestion du formulaire
+            const registrationForm = document.getElementById('registrationForm');
 
-            signupBtn.addEventListener('click', function() {
-                this.classList.add('animate-pulse');
+            registrationForm.addEventListener('submit', function(e) {
+                e.preventDefault();
 
+                const signupBtn = document.querySelector('.btn-primary');
+                signupBtn.classList.add('animate-pulse');
+
+                // Validation du formulaire
+                const prenom = document.getElementById('prenom').value;
+                const nom = document.getElementById('nom').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const confirmPassword = document.getElementById('confirm-password').value;
+
+                if (!prenom || !nom || !email || !password || !confirmPassword) {
+                    alert('Veuillez remplir tous les champs');
+                    signupBtn.classList.remove('animate-pulse');
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    alert('Les mots de passe ne correspondent pas');
+                    signupBtn.classList.remove('animate-pulse');
+                    return;
+                }
+
+                // Envoyer les données au serveur (simulation)
                 setTimeout(() => {
-                    this.classList.remove('animate-pulse');
+                    signupBtn.classList.remove('animate-pulse');
 
-                    // Validation simple
-                    const prenom = document.getElementById('prenom').value;
-                    const nom = document.getElementById('nom').value;
-                    const email = document.getElementById('email').value;
-                    const password = document.getElementById('password').value;
-                    const confirmPassword = document.getElementById('confirm-password').value;
-
-                    if (!prenom || !nom || !email || !password || !confirmPassword) {
-                        alert('Veuillez remplir tous les champs');
-                        return;
-                    }
-
-                    if (password !== confirmPassword) {
-                        alert('Les mots de passe ne correspondent pas');
-                        return;
-                    }
-
-                    // Simulation d'inscription réussie
-                    alert('Inscription réussie ! Bienvenue ' + prenom + ' ' + nom);
-
-                    // Réinitialiser le formulaire
-                    document.querySelector('form').reset();
-                }, 500);
+                    // Redirection vers la page d'accueil
+                    alert('Inscription réussie !');
+                }, 1000);
             });
         });
     </script>

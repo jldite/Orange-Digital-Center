@@ -1,6 +1,3 @@
-# backoffice/views.py
-import email
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -12,7 +9,7 @@ from django.db.models import Count
 from events.models import Event
 from frontoffice.models import CustomUser
 from applications.models import Application
-from attendance.models import Attendance
+
 
 # Fonction utilitaire pour vérifier les droits admin
 def admin_required(user):
@@ -25,44 +22,39 @@ def admin_required(user):
 # ==============================================
 
 @csrf_protect
-def admin_login(request):
-    """Page de connexion pour l'administration"""
-    # Rediriger si déjà connecté
-    if request.user.is_authenticated and admin_required(request.user):
-        return redirect('backoffice:backoffice_dashboard')
+def login_view(request):
+    """
+    Formulaire unique pour admin ET utilisateur normal.
+    Redirige selon le rôle.
+    """
+    if request.user.is_authenticated:
+        if admin_required(request.user):
+            return redirect('backoffice:backoffice_dashboard')
+        return redirect('frontoffice:home')
 
     if request.method == 'POST':
-        print("CSRF token in from:", request.POST.get('csrfmiddlewaretoken', 'MISSING'))
-        print("CSRF token in cookie:", request.META.get('CSRF_COOKIE', 'MISSING'))
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        try:
-            user = CustomUser.objects.get(username=username)
-        except CustomUser.DoesNotExist:
-            messages.error(request, "Aucun compte associe a ce nom d'utilisateur")
+        user = authenticate(request, username=username, password=password)
+        if user is None:
+            messages.error(request, "Nom d'utilisateur ou mot de passe incorrect.")
+        elif not user.is_active:
+            messages.error(request, "Ce compte est désactivé.")
         else:
-            if user.check_password(password):
-                if user.is_active and (user.is_staff or user.is_superuser):
-                    login(request, user)
-                    return redirect('backoffice:backoffice_dashboard')
-                else:
-                    if not user.is_active:
-                        messages.error(request, "Ce compte est desactive")
-                    else:
-                        messages.error(request, "Vous n'avez pas les droits d'administrateur")
-            else:
-                messages.error(request, "Mot de passe incorrect")
+            login(request, user)
+            if admin_required(user):
+                return redirect('backoffice:backoffice_dashboard')
+            return redirect('frontoffice:home')
 
     return render(request, 'backoffice/auth/login.html')
 
-
 @login_required
 def admin_logout(request):
-    """Déconnexion de l'administration"""
+    """Déconnexion """
     logout(request)
     messages.success(request, "Vous avez été déconnecté avec succès.")
-    return redirect('backoffice:admin_login')
+    return redirect('frontoffice:home')
 
 
 # ==============================================
