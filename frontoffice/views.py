@@ -1,25 +1,81 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django import forms
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 from django.views import View
+
+from frontoffice.models import CustomUser
+
 
 class home_view(View):
     def get(self,request):
         return render(request, 'frontoffice/home.html')
 
+# Formulaire d'inscription personnalisé
+class CustomUserCreationForm(forms.Form):
+    nom = forms.CharField(max_length=30, required=True, label="Nom")
+    postnom = forms.CharField(max_length=30, required=True, label="Postnom")
+    email = forms.EmailField(required=True, label="Adresse email")
+    password = forms.CharField(
+        widget=forms.PasswordInput,
+        required=True,
+        label="Mot de passe"
+    )
+    confirmPassword = forms.CharField(
+        widget=forms.PasswordInput,
+        required=True,
+        label="Confirmer le mot de passe"
+    )
+    terms = forms.BooleanField(required=True, label="J'accepte les termes et conditions")
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirmPassword")
+
+        if password and confirm_password and password != confirm_password:
+            raise ValidationError("Les mots de passe ne correspondent pas")
+
+        email = cleaned_data.get("email")
+        # Utilisez le modèle CustomUser ici
+        if CustomUser.objects.filter(email=email).exists():
+            raise ValidationError("Cette adresse email est déjà utilisée")
+
+        return cleaned_data
+
+
 def user_register(request):
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
+        form = CustomUserCreationForm(request.POST)
         if form.is_valid():
-            form.save()
+            # Création de l'utilisateur
+            nom = form.cleaned_data['nom']
+            postnom = form.cleaned_data['postnom']
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+
+            # Créer l'utilisateur avec le modèle CustomUser
+            user = CustomUser.objects.create_user(
+                username=email,  # Utiliser l'email comme nom d'utilisateur
+                email=email,
+                password=password,
+                first_name=nom,
+                last_name=postnom
+            )
+
             messages.success(request, "Compte créé avec succès. Veuillez vous connecter.")
             return redirect('frontoffice:home')
         else:
-            messages.error(request, "Veuillez corriger les erreurs.")
+            # Afficher les erreurs de validation
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{error}")
     else:
-        form = UserCreationForm()
+        form = CustomUserCreationForm()
+
     return render(request, 'frontoffice/register.html', {'form': form})
 
 

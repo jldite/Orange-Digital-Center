@@ -5,16 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3218b3e5-496f-4f32-9bbf-4939f9b39d73" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/frontoffice/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backoffice/templates/backoffice/auth/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/templates/backoffice/auth/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backoffice/templates/backoffice/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/templates/backoffice/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backoffice/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/urls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backoffice/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/views.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontoffice/templates/frontoffice/home.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontoffice/templates/frontoffice/home.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontoffice/templates/frontoffice/registration.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontoffice/templates/frontoffice/register.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontoffice/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/frontoffice/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontoffice/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/frontoffice/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontoffice/templates/frontoffice/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/frontoffice/templates/frontoffice/register.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/frontoffice/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/frontoffice/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
