@@ -5,17 +5,14 @@ from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_protect
 from django.core.exceptions import PermissionDenied
-from django.db.models import Count
+from django.db.models import Count, Q, F
 from events.models import Event
 from frontoffice.models import CustomUser
 from applications.models import Application
 
 
-# Fonction utilitaire pour vérifier les droits admin
 def admin_required(user):
-    """Vérifie si l'utilisateur est admin ou staff"""
     return user.is_authenticated and (user.is_staff or user.is_superuser or getattr(user, 'is_admin', False))
-
 
 # ==============================================
 # VUES D'AUTHENTIFICATION
@@ -60,10 +57,8 @@ def admin_logout(request):
 # ==============================================
 # VUES DU DASHBOARD ET BACKOFFICE
 # ==============================================
-
 @login_required
 def backoffice_dashboard(request):
-    """Tableau de bord principal"""
     if not admin_required(request.user):
         raise PermissionDenied
 
@@ -71,29 +66,59 @@ def backoffice_dashboard(request):
     total_events = Event.objects.count()
     upcoming_events = Event.objects.filter(start_date__gte=timezone.now()).count()
     total_users = CustomUser.objects.count()
+    approved_applications = Application.objects.filter(status='approved').count()
+    total_applications = Application.objects.count()
 
-    # Calcul du taux de participation par genre
+    # Calcul du taux de participation
+    participation_rate = 0
+    if total_applications > 0:
+        participation_rate = round((approved_applications / total_applications) * 100)
+
+    # Calcul du taux de satisfaction (exemple)
+    satisfaction_rate = 4.5
+
+    # Données pour graphique participation par genre
     gender_data = CustomUser.objects.values('gender').annotate(
         count=Count('id')
     ).order_by('gender')
 
-    # Préparer les données pour le graphique
     gender_labels = []
     gender_values = []
     for item in gender_data:
         gender_labels.append(dict(CustomUser.GENDER_CHOICES).get(item['gender'], item['gender']))
         gender_values.append(item['count'])
 
+    # Données pour graphique événements par type
+    event_types = Event.TYPE_CHOICES
+    event_type_data = []
+    event_type_labels = []
+    for type_id, type_name in event_types:
+        count = Event.objects.filter(type=type_id).count()
+        event_type_data.append(count)
+        event_type_labels.append(type_name)
+
     # Derniers événements
     recent_events = Event.objects.all().order_by('-start_date')[:5]
+
+    # Calcul des variations
+    last_month = timezone.now() - timezone.timedelta(days=30)
+    events_last_month = Event.objects.filter(created_at__gte=last_month).count()
+    events_variation = round(
+        ((total_events - events_last_month) / events_last_month * 100)) if events_last_month > 0 else 0
 
     context = {
         'total_events': total_events,
         'upcoming_events': upcoming_events,
         'total_users': total_users,
+        'participation_rate': participation_rate,
+        'satisfaction_rate': satisfaction_rate,
         'gender_labels': gender_labels,
         'gender_values': gender_values,
+        'event_type_labels': event_type_labels,
+        'event_type_data': event_type_data,
         'recent_events': recent_events,
+        'events_variation': events_variation,
+        'approved_applications': approved_applications,
     }
     return render(request, 'backoffice/dashboard/dashboard.html', context)
 

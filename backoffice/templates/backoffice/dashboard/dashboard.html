@@ -21,10 +21,10 @@
           <div class="flex justify-between items-center">
             <div>
               <p class="text-gray-500">Événements total</p>
-              <p class="text-3xl font-bold text-orange-primary">128</p>
-              <div class="mt-2 flex items-center text-green-600 text-sm">
-                <i class="fas fa-arrow-up mr-1"></i>
-                <span>12% depuis le mois dernier</span>
+              <p class="text-3xl font-bold text-orange-primary">{{ total_events }}</p>
+              <div class="mt-2 flex items-center {% if events_variation >= 0 %}text-green-600{% else %}text-red-600{% endif %} text-sm">
+                <i class="fas {% if events_variation >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %} mr-1"></i>
+                <span>{{ events_variation|abs }}% depuis le mois dernier</span>
               </div>
             </div>
             <div class="bg-orange-100 p-3 rounded-full">
@@ -37,7 +37,7 @@
           <div class="flex justify-between items-center">
             <div>
               <p class="text-gray-500">Participants</p>
-              <p class="text-3xl font-bold text-orange-primary">2,434</p>
+              <p class="text-3xl font-bold text-orange-primary">{{ approved_applications }}</p>
               <div class="mt-2 flex items-center text-green-600 text-sm">
                 <i class="fas fa-arrow-up mr-1"></i>
                 <span>18% depuis le mois dernier</span>
@@ -53,7 +53,7 @@
           <div class="flex justify-between items-center">
             <div>
               <p class="text-gray-500">Taux de participation</p>
-              <p class="text-3xl font-bold text-orange-primary">85%</p>
+              <p class="text-3xl font-bold text-orange-primary">{{ participation_rate }}%</p>
               <div class="mt-2 flex items-center text-green-600 text-sm">
                 <i class="fas fa-arrow-up mr-1"></i>
                 <span>5% depuis le mois dernier</span>
@@ -70,13 +70,17 @@
             <div>
               <p class="text-gray-500">Satisfaction</p>
               <div class="flex items-center">
-                <p class="text-3xl font-bold text-orange-primary mr-2">4.5</p>
+                <p class="text-3xl font-bold text-orange-primary mr-2">{{ satisfaction_rate }}</p>
                 <div class="flex text-orange-primary">
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star"></i>
-                  <i class="fas fa-star-half-alt"></i>
+                  {% for i in "12345"|make_list %}
+                    {% if forloop.counter <= satisfaction_rate|add:"0"|floatformat:"0" %}
+                      <i class="fas fa-star"></i>
+                    {% elif forloop.counter|add:"0" == satisfaction_rate|add:"0"|floatformat:"0"|add:"1" and satisfaction_rate|add:"0"|floatformat:"0" != satisfaction_rate %}
+                      <i class="fas fa-star-half-alt"></i>
+                    {% else %}
+                      <i class="far fa-star"></i>
+                    {% endif %}
+                  {% endfor %}
                 </div>
               </div>
               <div class="mt-2 text-sm text-gray-600">
@@ -106,24 +110,20 @@
             <canvas id="genderChart"></canvas>
           </div>
           <div class="mt-4 grid grid-cols-2 gap-4">
+            {% for gender, count in gender_data.items %}
             <div class="bg-gray-100 p-4 rounded-lg">
               <div class="flex justify-between items-center mb-1">
-                <p class="text-gray-500">Hommes</p>
-                <p class="text-xl font-bold">65%</p>
+                <p class="text-gray-500">{{ gender }}</p>
+                <p class="text-xl font-bold">
+                  {% widthratio count total_users 100 %}%
+                </p>
               </div>
-              <div class="w-full h-2 bg-gray-300 rounded-full overflow-hidden progress-bar" style="--gradient-start: #000000; --gradient-end: #000000">
-                <div class="bg-black-primary h-2 rounded-full" style="width: 65%"></div>
-              </div>
-            </div>
-            <div class="bg-gray-100 p-4 rounded-lg">
-              <div class="flex justify-between items-center mb-1">
-                <p class="text-gray-500">Femmes</p>
-                <p class="text-xl font-bold">35%</p>
-              </div>
-              <div class="w-full h-2 bg-gray-300 rounded-full overflow-hidden progress-bar" style="--gradient-start: #FF7900; --gradient-end: #FF9E42">
-                <div class="bg-orange-primary h-2 rounded-full" style="width: 35%"></div>
+              <div class="w-full h-2 bg-gray-300 rounded-full overflow-hidden progress-bar">
+                <div class="bg-orange-primary h-2 rounded-full"
+                     style="width: {% widthratio count total_users 100 %}%"></div>
               </div>
             </div>
+            {% endfor %}
           </div>
         </div>
 
@@ -147,9 +147,10 @@
       <div class="bg-white rounded-xl shadow-card p-6 mb-8">
         <div class="flex justify-between items-center mb-4">
           <h2 class="text-xl font-bold">Derniers événements</h2>
-          <button class="text-orange-primary hover:text-orange-dark font-medium flex items-center">
+          <a href="{% url 'backoffice:event_list' %}"
+             class="text-orange-primary hover:text-orange-dark font-medium flex items-center">
             Voir tout <i class="fas fa-arrow-right ml-2 transition-transform hover:translate-x-1"></i>
-          </button>
+          </a>
         </div>
         <div class="overflow-x-auto">
           <table class="min-w-full divide-y divide-gray-200">
@@ -163,66 +164,39 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-              <tr class="event-row">
+              {% for event in recent_events %}
+              <tr class="event-row {% cycle '' 'bg-gray-50' %}">
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="font-medium text-black-primary">Formation Python Avancé</div>
-                  <div class="text-sm text-gray-500">Fab Lab</div>
+                  <div class="font-medium text-black-primary">{{ event.title }}</div>
+                  <div class="text-sm text-gray-500">{{ event.location }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-orange-100 text-orange-primary">Formation</span>
+                  <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full
+                    {% if event.type == 'FORMATION' %}bg-orange-100 text-orange-primary
+                    {% elif event.type == 'CONF' %}bg-blue-100 text-blue-800
+                    {% else %}bg-purple-100 text-purple-800{% endif %}">
+                    {{ event.get_type_display }}
+                  </span>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">15 Juin 2024</div>
-                  <div class="text-xs text-gray-400">14h00 - 17h00</div>
+                  <div class="text-sm text-gray-500">{{ event.start_date|date:"d M Y" }}</div>
+                  <div class="text-xs text-gray-400">{{ event.start_date|time:"H:i" }} - {{ event.end_date|time:"H:i" }}</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">42</div>
-                  <div class="text-xs text-gray-400">(38 présents)</div>
+                  <div class="text-sm text-gray-500">{{ event.applications.count }}</div>
+                  <div class="text-xs text-gray-400">({{ event.applications.approved.count }} approuvés)</div>
                 </td>
                 <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Terminé</span>
-                </td>
-              </tr>
-              <tr class="event-row bg-gray-50">
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="font-medium text-black-primary">Conférence IA</div>
-                  <div class="text-sm text-gray-500">Digital</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">Conférence</span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">22 Juin 2024</div>
-                  <div class="text-xs text-gray-400">09h30 - 12h30</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">128</div>
-                  <div class="text-xs text-gray-400">(112 présents)</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">En cours</span>
+                  {% if event.end_date < timezone.now %}
+                    <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Terminé</span>
+                  {% elif event.start_date < timezone.now %}
+                    <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">En cours</span>
+                  {% else %}
+                    <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">À venir</span>
+                  {% endif %}
                 </td>
               </tr>
-              <tr class="event-row">
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="font-medium text-black-primary">Atelier Design</div>
-                  <div class="text-sm text-gray-500">ODC Clubs</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-purple-100 text-purple-800">Atelier</span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">28 Juin 2024</div>
-                  <div class="text-xs text-gray-400">10h00 - 13h00</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">24</div>
-                  <div class="text-xs text-gray-400">Inscriptions</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">À venir</span>
-                </td>
-              </tr>
+              {% endfor %}
             </tbody>
           </table>
         </div>
@@ -231,11 +205,82 @@
 {% endblock %}
 
 {% block chart_js %}
-  // Initialisation spécifique des graphiques pour cette page
-  const genderCtx = document.getElementById('genderChart')?.getContext('2d');
-  if (genderCtx) {
-    new Chart(genderCtx, {
-      // Configuration du graphique
-    });
-  }
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    // Graphique participation par genre
+    const genderCtx = document.getElementById('genderChart');
+    if (genderCtx) {
+      new Chart(genderCtx, {
+        type: 'doughnut',
+        data: {
+          labels: {{ gender_labels|safe }},
+          datasets: [{
+            data: {{ gender_values|safe }},
+            backgroundColor: ['#FF7900', '#000000', '#E56E00'],
+            borderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                boxWidth: 12,
+                padding: 20
+              }
+            }
+          },
+          cutout: '65%'
+        }
+      });
+    }
+
+    // Graphique événements par type
+    const eventsCtx = document.getElementById('eventsChart');
+    if (eventsCtx) {
+      new Chart(eventsCtx, {
+        type: 'bar',
+        data: {
+          labels: {{ event_type_labels|safe }},
+          datasets: [{
+            label: 'Nombre d\'événements',
+            data: {{ event_type_data|safe }},
+            backgroundColor: '#FF7900',
+            borderColor: '#E56E00',
+            borderWidth: 1,
+            borderRadius: 6,
+            barThickness: 30
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              grid: {
+                drawBorder: false
+              },
+              ticks: {
+                stepSize: 1
+              }
+            },
+            x: {
+              grid: {
+                display: false
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: false
+            }
+          }
+        }
+      });
+    }
+  });
+</script>
 {% endblock %}

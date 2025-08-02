@@ -40,6 +40,7 @@ class Event(models.Model):
     end_date = models.DateTimeField()
     description = models.TextField()
 
+
     def _str_(self):
         return self.title
 

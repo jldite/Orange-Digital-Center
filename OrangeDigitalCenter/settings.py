@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'frontoffice',
     'reporting',
     'attendance',
+    'taggit',
     'backoffice',
 ]
 
