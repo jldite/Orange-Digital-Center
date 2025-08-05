@@ -58,6 +58,18 @@ class CustomUser(AbstractUser):
         null=True,
         verbose_name="Organisation/Établissement"
     )
+    university = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name="Université"
+    )
+    qr_code = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name="QR Code"
+    )
     role = models.CharField(
         max_length=20,
         choices=ROLE_CHOICES,
@@ -274,6 +286,12 @@ class Application(models.Model):
         ('WAITLISTED', 'Liste d\'attente'),
         ('CANCELLED', 'Annulé'),
     ]
+    #champ pour la référence frontoffice
+    frontoffice_registration_id = models.PositiveIntegerField(
+        null=True,
+        blank=True,
+        verbose_name="ID Inscription Frontoffice"
+    )
 
     # Relations
     event = models.ForeignKey(

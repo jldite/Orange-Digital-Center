@@ -3,11 +3,11 @@ from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib.auth import login, authenticate
 from django.core.exceptions import ValidationError
 from django.views import View
 
-from frontoffice.models import CustomUser
+from backoffice.models import CustomUser
 
 
 class home_view(View):
@@ -66,8 +66,21 @@ def user_register(request):
                 last_name=postnom
             )
 
-            messages.success(request, "Compte créé avec succès. Veuillez vous connecter.")
-            return redirect('frontoffice:home')
+            # Authentifier et connecter automatiquement l'utilisateur
+            authenticated_user = authenticate(
+                request,
+                username=email,
+                password=password
+            )
+
+            if authenticated_user is not None:
+                login(request, authenticated_user)
+                messages.success(request, "Compte créé avec succès. Vous êtes maintenant connecté!")
+                return redirect('frontoffice:home')
+            else:
+                messages.warning(request,
+                                 "Compte créé mais connexion automatique échouée. Veuillez vous connecter manuellement.")
+                return redirect('frontoffice:login')
         else:
             # Afficher les erreurs de validation
             for field, errors in form.errors.items():

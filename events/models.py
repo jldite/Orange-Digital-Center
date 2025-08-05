@@ -5,13 +5,14 @@ from io import BytesIO
 from django.core.files.base import ContentFile
 import qrcode
 
-# Définir les choix avant les modèles
+# Choix de statuts pour les inscriptions
 STATUS_CHOICES = [
     ('pending', 'En attente'),
     ('approved', 'Approuvé'),
     ('rejected', 'Rejeté'),
 ]
 
+# Choix de lieux pour les événements
 LOCATION_CHOICES = [
     ('digital', 'Digital'),
     ('fablab', 'Fab Lab'),
@@ -19,9 +20,8 @@ LOCATION_CHOICES = [
     ('odc_clubs', 'ODC Clubs'),
 ]
 
-
 class Event(models.Model):
-    EVENT_TYPES = [
+    TYPE_CHOICES = [
         ('formation', 'Formation'),
         ('conference', 'Conférence'),
         ('talk', 'Talk'),
@@ -34,26 +34,25 @@ class Event(models.Model):
     ]
 
     title = models.CharField(max_length=200)
-    event_type = models.CharField(max_length=50, choices=EVENT_TYPES)
+    event_type = models.CharField(max_length=50, choices=TYPE_CHOICES)
     location = models.CharField(max_length=50, choices=LOCATION_CHOICES)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
     description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)  # ✅ Ajouté ici
 
-
-    def _str_(self):
+    def __str__(self):
         return self.title
-
 
 class Registration(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     event = models.ForeignKey(Event, on_delete=models.CASCADE)
     registration_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')  # Correction ici
-    qr_code = models.ImageField(upload_to='qrcodes/', blank=True)  # Correction du nom "qr_code" (pas "qp_code")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    qr_code = models.ImageField(upload_to='qrcodes/', blank=True)
 
     def save(self, *args, **kwargs):
-        if not self.qr_code:  # Générer le QR code seulement s'il n'existe pas
+        if not self.qr_code:
             self.generate_qr_code()
         super().save(*args, **kwargs)
 
@@ -65,7 +64,6 @@ class Registration(models.Model):
             border=4,
         )
 
-        # Données uniques pour le QR code
         unique_id = uuid.uuid4().hex
         data = f"REG:{self.id}:{self.user.id}:{unique_id}"
         qr.add_data(data)

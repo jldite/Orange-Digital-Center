@@ -7,7 +7,7 @@ from django.views.decorators.csrf import csrf_protect
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Q, F
 from events.models import Event
-from frontoffice.models import CustomUser
+from backoffice.models import CustomUser
 from applications.models import Application
 
 
@@ -93,7 +93,7 @@ def backoffice_dashboard(request):
     event_type_data = []
     event_type_labels = []
     for type_id, type_name in event_types:
-        count = Event.objects.filter(type=type_id).count()
+        count = Event.objects.filter(event_type=type_id).count()
         event_type_data.append(count)
         event_type_labels.append(type_name)
 

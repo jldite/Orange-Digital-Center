@@ -123,7 +123,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL ='frontoffice.CustomUser'
+AUTH_USER_MODEL ='backoffice.CustomUser'
 
 LOGIN_URL ='/backoffice/login/'
 # Redirection après connexion

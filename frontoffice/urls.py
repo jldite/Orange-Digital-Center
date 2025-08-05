@@ -12,4 +12,7 @@ urlpatterns = [
     path('logout/', views.user_logout, name='logout'),
     path('register/', views.user_register, name='register'),
     path('profile/', views.user_profile, name='profile'),
+path('events/<int:event_id>/', views.event_detail, name='event_detail'),
+    path('events/<int:event_id>/register/', views.register_for_event, name='event_register'),
+    path('registrations/<int:registration_id>/confirmation/', views.registration_confirmation, name='registration_confirmation'),
 ]
