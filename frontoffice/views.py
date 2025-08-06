@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
@@ -96,7 +96,7 @@ def user_register(request):
 def user_logout(request):
     logout(request)
     messages.success(request, "Vous avez été déconnecté.")
-    return redirect('login')
+    return redirect('frontoffice:home')
 
 
 # Vue du profil (nécessite connexion)

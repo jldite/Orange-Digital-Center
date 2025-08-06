@@ -1,14 +1,14 @@
-<aside class="w-64 bg-gradient-to-b from-black-primary to-gray-dark text-white flex flex-col">
+<aside class="w-64 bg-gradient-to-b from-black-primary to-gray-dark text-white flex flex-col shadow-sidebar">
     <div class="p-4 text-center border-b border-gray-800">
         <h1 class="text-2xl font-bold text-orange-primary">Orange <span class="text-white">Digital Center</span></h1>
     </div>
 
     <div class="p-4 flex flex-col items-center border-b border-gray-800">
-        <div class="w-20 h-20 rounded-full border-2 border-orange-primary bg-gray-200 flex items-center justify-center mb-3">
+        <div class="w-20 h-20 rounded-full border-2 border-orange-primary bg-gray-200 flex items-center justify-center mb-3 dark:bg-gray-700">
             {% if request.user.profile.photo %}
                 <img src="{{ request.user.profile.photo.url }}" alt="Photo de profil" class="w-full h-full rounded-full">
             {% else %}
-                <i class="fas fa-user text-gray-600 text-3xl"></i>
+                <i class="fas fa-user text-gray-600 dark:text-gray-400 text-3xl"></i>
             {% endif %}
         </div>
         <h2 class="mt-2 font-semibold">{{ request.user.get_full_name }}</h2>
