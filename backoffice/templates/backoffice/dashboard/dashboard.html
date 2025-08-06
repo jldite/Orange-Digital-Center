@@ -24,7 +24,7 @@
               <p class="text-3xl font-bold text-orange-primary">{{ total_events }}</p>
               <div class="mt-2 flex items-center {% if events_variation >= 0 %}text-green-600{% else %}text-red-600{% endif %} text-sm">
                 <i class="fas {% if events_variation >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %} mr-1"></i>
-                <span>{{ events_variation|abs }}% depuis le mois dernier</span>
+                <span>{{ abs_events_variation }}% depuis le mois dernier</span>
               </div>
             </div>
             <div class="bg-orange-100 p-3 rounded-full">

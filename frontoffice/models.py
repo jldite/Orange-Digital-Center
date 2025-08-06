@@ -33,7 +33,7 @@ class EventRegistration(models.Model):
     )
     # Nouveau champ pour lier à l'inscription backoffice
     backoffice_registration = models.OneToOneField(
-        'backoffice.Registration',
+        'events.Registration',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,

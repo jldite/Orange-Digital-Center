@@ -295,14 +295,12 @@ class Application(models.Model):
     event = models.ForeignKey(
         Event,
         on_delete=models.CASCADE,
-        related_name='applications',
-        verbose_name="Événement"
+        related_name='backoffice_applications'
     )
     user = models.ForeignKey(
         CustomUser,
         on_delete=models.CASCADE,
-        related_name='applications',
-        verbose_name="Participant"
+        related_name='backoffice_applications'
     )
 
     # Statut et suivi
@@ -460,37 +458,3 @@ class Report(models.Model):
     @property
     def date_range(self):
         return f"{self.start_date} - {self.end_date}"
-
-
-from django.db import models
-from django.contrib.auth import get_user_model  # Ajoutez cette ligne
-
-User = get_user_model()  # Ajoutez cette ligne
-
-
-class Registration(models.Model):
-    STATUS_CHOICES = [
-        ('PENDING', 'En attente'),
-        ('CONFIRMED', 'Confirmé'),
-        ('CANCELLED', 'Annulé'),
-    ]
-
-    user = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE,
-        verbose_name="Utilisateur"
-    )
-    event = models.ForeignKey(
-        'Event',
-        on_delete=models.CASCADE,
-        verbose_name="Événement"
-    )
-    registration_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
-
-    class Meta:
-        verbose_name = "Inscription"
-        verbose_name_plural = "Inscriptions"
-
-    def __str__(self):
-        return f"{self.user} - {self.event}"

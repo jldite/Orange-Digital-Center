@@ -45,8 +45,8 @@ class Event(models.Model):
         return self.title
 
 class Registration(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    event = models.ForeignKey(Event, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='event_registrations')
+    event = models.ForeignKey(Event,on_delete=models.CASCADE,related_name='registrations')
     registration_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     qr_code = models.ImageField(upload_to='qrcodes/', blank=True)
@@ -57,6 +57,8 @@ class Registration(models.Model):
         super().save(*args, **kwargs)
 
     def generate_qr_code(self):
+
+        data = f"REG:{self.id}:{self.user.id}"
         qr = qrcode.QRCode(
             version=1,
             error_correction=qrcode.constants.ERROR_CORRECT_L,

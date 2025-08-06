@@ -105,6 +105,7 @@ def backoffice_dashboard(request):
     events_last_month = Event.objects.filter(created_at__gte=last_month).count()
     events_variation = round(
         ((total_events - events_last_month) / events_last_month * 100)) if events_last_month > 0 else 0
+    abs_events_variation = abs(events_variation)
 
     context = {
         'total_events': total_events,
@@ -119,6 +120,7 @@ def backoffice_dashboard(request):
         'recent_events': recent_events,
         'events_variation': events_variation,
         'approved_applications': approved_applications,
+        'abs_events_variation': abs_events_variation,
     }
     return render(request, 'backoffice/dashboard/dashboard.html', context)
 
