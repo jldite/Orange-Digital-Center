@@ -6,18 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="3218b3e5-496f-4f32-9bbf-4939f9b39d73" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/applications/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/applications/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/attendance/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/attendance/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backoffice/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backoffice/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backoffice/templates/backoffice/dashboard/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/templates/backoffice/dashboard/dashboard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backoffice/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/events/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/events/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/events/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/events/models.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/events/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/events/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontoffice/migrations/0001_initial.py" beforeDir="false" afterPath="$PROJECT_DIR$/frontoffice/migrations/0001_initial.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/frontoffice/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/frontoffice/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

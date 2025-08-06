@@ -1,0 +1,71 @@
+<header class="bg-white shadow">
+    <div class="flex items-center justify-between p-4">
+        <div>
+            <h1 class="text-xl font-bold text-black-primary">Dashboard</h1>
+            <p class="text-sm text-gray-500">Bienvenue dans votre espace d'administration</p>
+        </div>
+        <div class="flex items-center space-x-4">
+            <div class="relative">
+                <input type="text" placeholder="Rechercher..." class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent">
+                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+            </div>
+            <button class="relative p-2 text-gray-500 hover:text-gray-700">
+                <i class="fas fa-bell"></i>
+                <span class="absolute top-0 right-0 bg-orange-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+            </button>
+            <button class="relative p-2 text-gray-500 hover:text-gray-700">
+                <i class="fas fa-envelope"></i>
+                <span class="absolute top-0 right-0 bg-orange-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">5</span>
+            </button>
+
+            <!-- Zone de profil avec menu déroulant -->
+            <div class="flex items-center relative" id="profile-container">
+                <button id="profile-btn" class="flex items-center focus:outline-none">
+                    <div class="w-10 h-10 rounded-full border-2 border-orange-primary bg-gray-200 flex items-center justify-center">
+                        {% if request.user.profile.photo %}
+                        <img src="{{ request.user.profile.photo.url }}" alt="Photo de profil" class="w-full h-full rounded-full">
+                        {% else %}
+                        <i class="fas fa-user text-gray-600"></i>
+                        {% endif %}
+                    </div>
+                    <span class="ml-2 font-medium">{{ request.user.get_short_name }}</span>
+                    <i class="fas fa-chevron-down ml-2 text-sm text-gray-500"></i>
+                </button>
+
+                <!-- Menu profil (caché par défaut) -->
+                <div id="profile-menu" class="absolute hidden right-0 mt-2 w-60 bg-white rounded-lg shadow-xl z-50 overflow-hidden profile-menu">
+                    <div class="p-4 border-b">
+                        <div class="flex items-center">
+                            <div class="w-12 h-12 rounded-full border-2 border-orange-primary bg-gray-200 flex items-center justify-center mr-3">
+                                {% if request.user.profile.photo %}
+                                <img src="{{ request.user.profile.photo.url }}" alt="Photo de profil" class="w-full h-full rounded-full">
+                                {% else %}
+                                <i class="fas fa-user text-gray-600"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <p class="font-semibold">{{ request.user.get_full_name }}</p>
+                                <p class="text-sm text-gray-500">Administrateur</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="py-2">
+                        <a href="{% url 'backoffice:profile' %}" class="profile-menu-item block px-4 py-3 text-gray-700 hover:bg-gray-50 flex items-center">
+                            <i class="fas fa-user-edit mr-3 text-orange-primary"></i>
+                            Éditer le profil
+                        </a>
+                        <a href="{% url 'backoffice:admin_logout' %}" class="profile-menu-item block px-4 py-3 text-gray-700 hover:bg-gray-50 flex items-center">
+                            <i class="fas fa-sign-out-alt mr-3 text-orange-primary"></i>
+                            Déconnexion
+                        </a>
+                    </div>
+
+                    <div class="px-4 py-3 bg-gray-50 text-center text-xs text-gray-500">
+                        Orange Digital Center © {% now "Y" %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
