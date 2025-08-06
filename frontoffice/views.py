@@ -103,3 +103,8 @@ def user_logout(request):
 @login_required
 def user_profile(request):
     return render(request, 'frontoffice/profile.html', {'user': request.user})
+
+def event_detail(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+    context = {'event': event}
+    return render(request, 'events/event_detail.html', context)

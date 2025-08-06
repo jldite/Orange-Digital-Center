@@ -5,14 +5,12 @@ from django.urls import reverse
 from django.core.validators import MinValueValidator, MaxValueValidator
 import qrcode
 from io import BytesIO
-from django.core.files import File
 from django.core.files.base import ContentFile
-import os
+
 
 try:
     from taggit.managers import TaggableManager
 except ImportError:
-    # Fallback si taggit n'est pas installé
     class TaggableManager:
         def __init__(self, *args, **kwargs):
             pass
@@ -462,3 +460,37 @@ class Report(models.Model):
     @property
     def date_range(self):
         return f"{self.start_date} - {self.end_date}"
+
+
+from django.db import models
+from django.contrib.auth import get_user_model  # Ajoutez cette ligne
+
+User = get_user_model()  # Ajoutez cette ligne
+
+
+class Registration(models.Model):
+    STATUS_CHOICES = [
+        ('PENDING', 'En attente'),
+        ('CONFIRMED', 'Confirmé'),
+        ('CANCELLED', 'Annulé'),
+    ]
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name="Utilisateur"
+    )
+    event = models.ForeignKey(
+        'Event',
+        on_delete=models.CASCADE,
+        verbose_name="Événement"
+    )
+    registration_date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='PENDING')
+
+    class Meta:
+        verbose_name = "Inscription"
+        verbose_name_plural = "Inscriptions"
+
+    def __str__(self):
+        return f"{self.user} - {self.event}"
