@@ -1,0 +1,22 @@
+{% extends "backoffice/base.html" %}
+
+{% block content %}
+<div class="p-6">
+  <h1 class="text-2xl font-bold mb-6">Gestion des QR Codes</h1>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    {% for event in events %}
+    <div class="bg-white rounded-lg shadow p-4">
+      <h3 class="font-semibold mb-2">{{ event.title }}</h3>
+      <div class="flex justify-center mb-3">
+        <img src="{% url 'backoffice:download_qr' event.id %}" alt="QR Code" class="w-40 h-40">
+      </div>
+      <a href="{% url 'backoffice:download_qr' event.id %}"
+         class="block text-center bg-orange-primary text-white py-2 rounded hover:bg-orange-dark">
+        <i class="fas fa-download mr-2"></i>Télécharger
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

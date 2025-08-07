@@ -1,3 +1,7 @@
+import io
+
+import qrcode
+from django.http import FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
@@ -236,3 +240,31 @@ def home_view(request):
 @login_required
 def profile(request):
     return user_detail(request, request.user.id)
+
+@login_required
+def qr_codes_view(request):
+    events = Event.objects.all()
+    return render(request, 'backoffice/dashboard/qr_codes.html', {'events': events})
+
+@login_required
+def download_qr(request, event_id):
+    event = Event.objects.get(id=event_id)
+
+    # Générer le QR code
+    qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(f"event:{event.id}")
+    qr.make(fit=True)
+
+    img = qr.make_image(fill_color="black", back_color="white")
+
+    # Créer une réponse fichier
+    buffer = io.BytesIO()
+    img.save(buffer, format="PNG")
+    buffer.seek(0)
+
+    return FileResponse(buffer, as_attachment=True, filename=f"qr_code_event_{event.id}.png")

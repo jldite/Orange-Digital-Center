@@ -31,4 +31,7 @@ urlpatterns = [
     path('system/settings/', views.system_settings, name='system_settings'),
     # Profile
     path('profile/', views.user_detail, name='profile', kwargs={'user_id':None}),
+
+    path('qr-codes/', views.qr_codes_view, name='qr_codes'),
+    path('download-qr/<int:event_id>/', views.download_qr, name='download_qr'),
 ]
