@@ -26,8 +26,8 @@
             'gray-light':     '#F5F5F5',
             'gradient-start': '#FF9E42',
             'gradient-end':   '#FF7900',
-            'dark-bg':        '#1E293B',
-            'dark-card':      '#334155'
+            'dark-bg':        '#0f172a',  // Nouveau fond sombre
+            'dark-card':      '#1e293b'   // Nouveau fond cartes
           },
           boxShadow: {
             'card': '0 4px 20px rgba(0, 0, 0, 0.08)',
@@ -41,52 +41,33 @@
   </script>
 
   <style>
-
-    /* Nouveaux styles pour le mode sombre plus doux */
+    /* Nouveaux styles pour le mode sombre inspiré de DeepSeek */
     .dark .bg-gray-light {
-      background-color: #1E293B; /* Couleur de fond plus douce */
+      background-color: #0f172a;
     }
     .dark .bg-white {
-      background-color: #334155; /* Couleur des cartes plus douce */
-    }
-    .dark .text-black-primary {
-      color: #E2E8F0; /* Texte principal clair */
-    }
-    .dark .text-gray-500 {
-      color: #94A3B8; /* Texte secondaire doux */
-    }
-    .dark .border-gray-800 {
-      border-color: #475569;
-    }
-    .dark .bg-gray-50 {
-      background-color: #1E293B;
-    }
-    .dark .bg-gray-100 {
-      background-color: #334155;
-    }
-    .dark .bg-orange-100 {
-      background-color: #4a1d00;
-    }
-    .dark .bg-gray-200 {
-      background-color: #2d3748;
-    }
-    .dark .text-gray-400 {
-      color: #a0aec0;
-    }
-    .dark .bg-gray-800 {
-      background-color: #2d3748;
-    }
-    .dark .hover\:bg-gray-50:hover {
-      background-color: #475569;
-    }
-    .dark .shadow-card {
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      background-color: #1e293b;
+      border: 1px solid #334155;
     }
     .dark .stat-card {
-      background-color: #334155;
+      background-color: #1e293b;
+      border: 1px solid #334155;
     }
     .dark .chart-container {
-      background: linear-gradient(145deg, #334155, #2d3748);
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      border: 1px solid #334155;
+    }
+    .dark .text-black-primary {
+      color: #e2e8f0;
+    }
+    .dark .text-gray-500 {
+      color: #94a3b8;
+    }
+    .dark .shadow-card {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+    .dark .progress-bar {
+      background-color: #334155;
     }
   </style>
 

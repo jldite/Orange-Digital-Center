@@ -5,11 +5,7 @@
             <p class="text-sm text-gray-500 dark:text-gray-400">Bienvenue dans votre espace d'administration</p>
         </div>
         <div class="flex items-center space-x-4">
-            <!-- Bouton mode sombre -->
-            <button id="theme-toggle" class="p-2 rounded-full bg-gray-200 dark:bg-gray-700">
-                <i class="fas fa-moon dark:hidden text-gray-700"></i>
-                <i class="fas fa-sun hidden dark:block text-yellow-400"></i>
-            </button>
+            <!-- Suppression du bouton mode sombre dans la topbar (déplacé dans le menu) -->
 
             <div class="relative">
                 <input type="text" placeholder="Rechercher..." class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
@@ -59,6 +55,12 @@
                     </div>
 
                     <div class="py-2">
+                        <a id="theme-toggle" href="#" class="profile-menu-item block px-4 py-3 text-gray-700 hover:bg-gray-50 flex items-center dark:text-gray-300 dark:hover:bg-gray-700">
+                            <i class="fas fa-moon mr-3 text-orange-primary dark:hidden"></i>
+                            <i class="fas fa-sun mr-3 text-orange-primary hidden dark:block"></i>
+                            <span class="dark:hidden">Mode sombre</span>
+                            <span class="hidden dark:inline">Mode clair</span>
+                        </a>
                         <a href="{% url 'backoffice:profile' %}" class="profile-menu-item block px-4 py-3 text-gray-700 hover:bg-gray-50 flex items-center dark:text-gray-300 dark:hover:bg-gray-700">
                             <i class="fas fa-user-edit mr-3 text-orange-primary"></i>
                             Éditer le profil

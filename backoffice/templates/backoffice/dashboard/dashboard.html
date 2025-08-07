@@ -65,6 +65,43 @@
           </div>
         </div>
 
+        <!-- Nouvelle carte : Documents archivés -->
+        <div class="stat-card bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500">Documents archivés</p>
+              <p class="text-3xl font-bold text-orange-primary">{{ archived_count }}</p>
+              <div class="mt-2 text-sm">
+                <span class="text-green-600">+{{ new_archives }} ce mois</span>
+              </div>
+            </div>
+            <div class="bg-orange-100 p-3 rounded-full">
+              <i class="fas fa-archive text-orange-primary text-xl"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Nouvelle carte : Événements par tag -->
+        <div class="stat-card bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover">
+          <div class="flex justify-between items-center">
+            <div>
+              <p class="text-gray-500">Événements par tag</p>
+              <div class="mt-2 space-y-1">
+                {% for tag, count in tag_distribution.items %}
+                <div class="flex justify-between">
+                  <span class="text-sm">{{ tag }}</span>
+                  <span class="font-medium">{{ count }}</span>
+                </div>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="bg-orange-100 p-3 rounded-full">
+              <i class="fas fa-tags text-orange-primary text-xl"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Carte de satisfaction détaillée -->
         <div class="stat-card bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover">
           <div class="flex justify-between items-center">
             <div>
@@ -83,8 +120,23 @@
                   {% endfor %}
                 </div>
               </div>
-              <div class="mt-2 text-sm text-gray-600">
-                <span class="font-medium">+0.3</span> depuis le trimestre dernier
+              <div class="mt-2 grid grid-cols-2 gap-2">
+                <div class="text-xs">
+                  <span class="font-medium">Formations:</span>
+                  {{ satisfaction_details.training }}%
+                </div>
+                <div class="text-xs">
+                  <span class="font-medium">Conférences:</span>
+                  {{ satisfaction_details.conference }}%
+                </div>
+                <div class="text-xs">
+                  <span class="font-medium">Ateliers:</span>
+                  {{ satisfaction_details.workshop }}%
+                </div>
+                <div class="text-xs">
+                  <span class="font-medium">Événements:</span>
+                  {{ satisfaction_details.event }}%
+                </div>
               </div>
             </div>
             <div class="bg-orange-100 p-3 rounded-full">
@@ -143,6 +195,34 @@
         </div>
       </div>
 
+      <!-- Section QR Code -->
+      <div class="bg-white rounded-xl shadow-card p-6 mb-8">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold">Rapports QR Code</h2>
+          <a href="{% url 'backoffice:qr_codes' %}"
+             class="text-orange-primary hover:text-orange-dark font-medium flex items-center">
+            Voir tout <i class="fas fa-arrow-right ml-2 transition-transform hover:translate-x-1"></i>
+          </a>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {% for event in qr_events %}
+          <div class="border rounded-lg p-4 flex flex-col items-center">
+            <h3 class="font-medium mb-2">{{ event.title }}</h3>
+            <img src="{{ event.qr_code.url }}" alt="QR Code" class="w-32 h-32 mb-2">
+            <p class="text-sm text-gray-500">
+              Scans: {{ event.qr_scans }}
+            </p>
+            <a href="{% url 'backoffice:download_qr' event.id %}"
+               class="mt-2 text-orange-primary hover:underline">
+              <i class="fas fa-download mr-1"></i>Télécharger
+            </a>
+          </div>
+          {% empty %}
+          <p class="text-gray-500">Aucun QR Code disponible pour le moment.</p>
+          {% endfor %}
+        </div>
+      </div>
+
       <!-- Recent Events -->
       <div class="bg-white rounded-xl shadow-card p-6 mb-8">
         <div class="flex justify-between items-center mb-4">
@@ -150,6 +230,19 @@
           <a href="{% url 'backoffice:event_list' %}"
              class="text-orange-primary hover:text-orange-dark font-medium flex items-center">
             Voir tout <i class="fas fa-arrow-right ml-2 transition-transform hover:translate-x-1"></i>
+          </a>
+        </div>
+        <!-- Filtrage par tags -->
+        <div class="flex flex-wrap gap-2 mb-4">
+          <span class="font-medium mr-2">Filtrer par tag:</span>
+          {% for tag in all_tags %}
+          <a href="?tag={{ tag.slug }}"
+             class="px-3 py-1 bg-gray-100 rounded-full text-sm hover:bg-orange-100 dark:bg-gray-700">
+              {{ tag.name }}
+          </a>
+          {% endfor %}
+          <a href="?" class="px-3 py-1 bg-orange-100 rounded-full text-sm">
+              Tous
           </a>
         </div>
         <div class="overflow-x-auto">
