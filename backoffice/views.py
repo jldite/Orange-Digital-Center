@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Q, F
 from events.models import Event
@@ -18,7 +18,7 @@ def admin_required(user):
 # VUES D'AUTHENTIFICATION
 # ==============================================
 
-@csrf_protect
+@csrf_exempt
 def login_view(request):
     if request.user.is_authenticated:
         if admin_required(request.user):
@@ -48,7 +48,7 @@ def login_view(request):
             login(request, user)
             if admin_required(user):
                 return redirect('backoffice:backoffice_dashboard')
-            return redirect('home')
+            return redirect('frontoffice:home')
 
     return render(request, 'backoffice/auth/login.html')
 
