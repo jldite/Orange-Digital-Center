@@ -1,4 +1,3 @@
-# frontoffice/forms.py
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
@@ -40,3 +39,22 @@ class FrontUserCreationForm(UserCreationForm):
             'class': 'input-field',
             'placeholder': '••••••••'
         })
+
+        def save(self, commit=True):
+            user = super().save(commit=False)
+
+            # Générer un nom d'utilisateur à partir de l'email
+            base_username = self.cleaned_data['email'].split('@')[0]
+            username = base_username
+            counter = 1
+
+            # S'assurer que le nom d'utilisateur est unique
+            while User.objects.filter(username=username).exists():
+                username = f"{base_username}{counter}"
+                counter += 1
+
+            user.username = username
+
+            if commit:
+                user.save()
+            return user

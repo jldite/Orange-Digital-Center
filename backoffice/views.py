@@ -20,33 +20,43 @@ def admin_required(user):
 
 @csrf_protect
 def login_view(request):
-    """
-    Formulaire unique pour admin ET utilisateur normal.
-    Redirige selon le rôle.
-    """
     if request.user.is_authenticated:
         if admin_required(request.user):
             return redirect('backoffice:backoffice_dashboard')
-        # Redirection vers la page d'accueil publique
-        return redirect('home')  # Changé ici
+        return redirect('home')
 
     if request.method == 'POST':
-        username = request.POST.get('username')
+        identifier = request.POST.get('identifier')  # Champ unique pour username ou email
         password = request.POST.get('password')
 
-        user = authenticate(request, username=username, password=password)
+        # Essayer d'abord avec le nom d'utilisateur
+        user = authenticate(request, username=identifier, password=password)
+
+        # Si échec, essayer avec l'email
         if user is None:
-            messages.error(request, "Nom d'utilisateur ou mot de passe incorrect.")
+            try:
+                user_obj = CustomUser.objects.get(email=identifier)
+                user = authenticate(request, username=user_obj.username, password=password)
+            except CustomUser.DoesNotExist:
+                pass  # On continue avec user=None
+
+        if user is None:
+            messages.error(request, "Identifiant ou mot de passe incorrect.")
         elif not user.is_active:
             messages.error(request, "Ce compte est désactivé.")
         else:
             login(request, user)
             if admin_required(user):
                 return redirect('backoffice:backoffice_dashboard')
-            # Redirection vers la page d'accueil publique
-            return redirect('home')  # Changé ici
+            return redirect('home')
 
     return render(request, 'backoffice/auth/login.html')
+
+@login_required
+def logout_view(request):
+    logout(request)
+    messages.success(request, "Vous avez été déconnecté.")
+    return redirect('frontoffice:home')
 # ==============================================
 # VUES DU DASHBOARD ET BACKOFFICE
 # ==============================================
