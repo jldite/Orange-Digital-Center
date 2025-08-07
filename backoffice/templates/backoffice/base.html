@@ -6,12 +6,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% block title %}Dashboard | Orange Digital Center{% endblock %}</title>
 
-  <!-- Tailwind & Chart.js & FontAwesome -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
 
-  <!-- Config Tailwind -->
   <script>
     tailwind.config = {
       darkMode: 'class',
@@ -19,20 +17,16 @@
         extend: {
           colors: {
             'orange-primary': '#FF7900',
-            'orange-dark':    '#E56E00',
-            'orange-light':   '#FF9E42',
-            'black-primary':  '#000000',
-            'gray-dark':      '#333333',
-            'gray-light':     '#F5F5F5',
-            'gradient-start': '#FF9E42',
-            'gradient-end':   '#FF7900',
-            'dark-bg':        '#0f172a',  // Nouveau fond sombre
-            'dark-card':      '#1e293b'   // Nouveau fond cartes
+            'orange-dark': '#E56E00',
+            'black-primary': '#000000',
+            'dark-bg': '#000000',
+            'dark-card': '#141414',
+            'dark-border': '#282828',
+            'dark-text': '#F5F5F5'
           },
           boxShadow: {
             'card': '0 4px 20px rgba(0, 0, 0, 0.08)',
             'card-hover': '0 8px 25px rgba(0, 0, 0, 0.12)',
-            'topbar': '0 2px 10px rgba(0, 0, 0, 0.05)',
             'sidebar': '4px 0 15px rgba(0, 0, 0, 0.05)'
           }
         }
@@ -41,52 +35,156 @@
   </script>
 
   <style>
-    /* Nouveaux styles pour le mode sombre inspiré de DeepSeek */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    body {
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+    }
+
     .dark .bg-gray-light {
-      background-color: #0f172a;
+      background-color: #000000;
     }
+
     .dark .bg-white {
-      background-color: #1e293b;
-      border: 1px solid #334155;
+      background-color: #141414;
+      border: 1px solid #282828;
     }
+
     .dark .stat-card {
-      background-color: #1e293b;
-      border: 1px solid #334155;
+      background-color: #141414;
+      border: 1px solid #282828;
     }
+
     .dark .chart-container {
-      background: linear-gradient(145deg, #1e293b, #0f172a);
-      border: 1px solid #334155;
+      background-color: #141414;
+      border: 1px solid #282828;
     }
+
     .dark .text-black-primary {
-      color: #e2e8f0;
+      color: #f5f5f5;
     }
+
     .dark .text-gray-500 {
-      color: #94a3b8;
+      color: #a0a0a0;
     }
+
     .dark .shadow-card {
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     }
+
+    .progress-bar {
+      background-color: #e5e5e5;
+    }
+
     .dark .progress-bar {
-      background-color: #334155;
+      background-color: #282828;
+    }
+
+    .status-badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.5rem;
+    }
+
+    .sidebar-link:hover {
+      background-color: rgba(255, 121, 0, 0.1);
+    }
+
+    .active-sidebar-link {
+      background-color: rgba(255, 121, 0, 0.1);
+      border-left-color: #FF7900;
+      color: white;
+    }
+
+    .tag-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    .kpi-card {
+      transition: all 0.3s ease;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .profile-menu {
+      transform-origin: top right;
+      transition: all 0.3s ease;
+      opacity: 0;
+      transform: scale(0.95) translateY(-10px);
+      pointer-events: none;
+    }
+
+    .profile-menu.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: all;
+    }
+
+    .profile-menu-item {
+      transition: all 0.2s ease;
+    }
+
+    .profile-menu-item:hover {
+      background-color: rgba(255, 121, 0, 0.1);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .hidden-mobile {
+        display: none;
+      }
+
+      .mobile-flex-col {
+        flex-direction: column;
+      }
+
+      .mobile-w-full {
+        width: 100%;
+      }
+
+      .mobile-p-4 {
+        padding: 1rem;
+      }
+
+      .mobile-text-center {
+        text-align: center;
+      }
     }
   </style>
 
   {% block extra_css %}{% endblock %}
 </head>
 
-<body class="bg-gray-light flex h-screen dark:bg-dark-bg">
-  <!-- Sidebar -->
-  {% include 'backoffice/partials/sidebar.html' %}
+<body class="bg-gray-100 flex flex-col h-screen dark:bg-dark-bg md:flex-row">
+  <!-- Mobile menu button -->
+  <div class="md:hidden flex justify-between items-center p-4 bg-black-primary text-white">
+    <button id="mobile-menu-button" class="text-orange-primary">
+      <i class="fas fa-bars text-2xl"></i>
+    </button>
+    <h1 class="text-xl font-bold text-orange-primary">Orange Digital Center</h1>
+    <div class="w-8"></div> <!-- Spacer for alignment -->
+  </div>
+
+  <!-- Sidebar - Hidden on mobile by default -->
+  <aside id="sidebar" class="w-64 bg-gradient-to-b from-black-primary to-gray-900 text-white flex flex-col shadow-sidebar transform -translate-x-full md:translate-x-0 fixed md:relative inset-y-0 left-0 z-50 transition-transform duration-300">
+    {% include 'backoffice/partials/sidebar.html' %}
+  </aside>
 
   <!-- Main Content -->
   <main class="flex-1 flex flex-col overflow-hidden">
     <!-- Top Bar -->
     {% include 'backoffice/partials/topbar.html' %}
 
-    <!-- Dashboard Content -->
-    <div class="flex-1 overflow-y-auto p-6 bg-gray-light dark:bg-dark-bg">
-      {% block content %}
-      {% endblock %}
+    <!-- Content -->
+    <div class="flex-1 overflow-y-auto p-4 md:p-6 bg-gray-100 dark:bg-dark-bg">
+      {% block content %}{% endblock %}
     </div>
   </main>
 
@@ -100,12 +198,14 @@
         profileBtn.addEventListener('click', (e) => {
           e.stopPropagation();
           profileMenu.classList.toggle('hidden');
+          profileMenu.classList.toggle('active');
         });
 
         // Fermer le menu quand on clique ailleurs
         document.addEventListener('click', (e) => {
-          if (!profileMenu.contains(e.target) && !profileBtn.contains(e.target)) {
+          if (!profileMenu.contains(e.target)) {
             profileMenu.classList.add('hidden');
+            profileMenu.classList.remove('active');
           }
         });
       }
@@ -114,18 +214,21 @@
       const themeToggle = document.getElementById('theme-toggle');
       const html = document.documentElement;
 
-      // Vérifier le thème sauvegardé ou la préférence système
-      const savedTheme = localStorage.getItem('theme');
-      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-
-      if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
-        html.classList.add('dark');
-      }
-
       if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
+        themeToggle.addEventListener('click', (e) => {
+          e.preventDefault();
           html.classList.toggle('dark');
           localStorage.setItem('theme', html.classList.contains('dark') ? 'dark' : 'light');
+        });
+      }
+
+      // Toggle de la sidebar sur mobile
+      const mobileMenuButton = document.getElementById('mobile-menu-button');
+      const sidebar = document.getElementById('sidebar');
+
+      if (mobileMenuButton && sidebar) {
+        mobileMenuButton.addEventListener('click', () => {
+          sidebar.classList.toggle('-translate-x-full');
         });
       }
     });

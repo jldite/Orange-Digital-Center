@@ -1,81 +1,112 @@
 <header class="bg-white shadow dark:bg-dark-card">
-    <div class="flex items-center justify-between p-4">
-        <div>
-            <h1 class="text-xl font-bold text-black-primary dark:text-white">Dashboard</h1>
-            <p class="text-sm text-gray-500 dark:text-gray-400">Bienvenue dans votre espace d'administration</p>
-        </div>
-        <div class="flex items-center space-x-4">
-            <!-- Suppression du bouton mode sombre dans la topbar (déplacé dans le menu) -->
-
-            <div class="relative">
-                <input type="text" placeholder="Rechercher..." class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
-            </div>
-
-            <button class="relative p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400">
-                <i class="fas fa-bell"></i>
-                <span class="absolute top-0 right-0 bg-orange-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
-            </button>
-
-            <button class="relative p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400">
-                <i class="fas fa-envelope"></i>
-                <span class="absolute top-0 right-0 bg-orange-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">5</span>
-            </button>
-
-            <!-- Zone de profil avec menu déroulant -->
-            <div class="flex items-center relative" id="profile-container">
-                <button id="profile-btn" class="flex items-center focus:outline-none">
-                    <div class="w-10 h-10 rounded-full border-2 border-orange-primary bg-gray-200 flex items-center justify-center dark:bg-gray-700">
-                        {% if request.user.profile.photo %}
-                        <img src="{{ request.user.profile.photo.url }}" alt="Photo de profil" class="w-full h-full rounded-full">
-                        {% else %}
-                        <i class="fas fa-user text-gray-600 dark:text-gray-400"></i>
-                        {% endif %}
-                    </div>
-                    <span class="ml-2 font-medium dark:text-white">{{ request.user.get_short_name }}</span>
-                    <i class="fas fa-chevron-down ml-2 text-sm text-gray-500 dark:text-gray-400"></i>
-                </button>
-
-                <!-- Menu profil (caché par défaut) -->
-                <div id="profile-menu" class="absolute hidden right-0 mt-2 w-60 bg-white rounded-lg shadow-xl z-50 overflow-hidden profile-menu dark:bg-dark-card">
-                    <div class="p-4 border-b dark:border-gray-700">
-                        <div class="flex items-center">
-                            <div class="w-12 h-12 rounded-full border-2 border-orange-primary bg-gray-200 flex items-center justify-center mr-3 dark:bg-gray-700">
-                                {% if request.user.profile.photo %}
-                                <img src="{{ request.user.profile.photo.url }}" alt="Photo de profil" class="w-full h-full rounded-full">
-                                {% else %}
-                                <i class="fas fa-user text-gray-600 dark:text-gray-400"></i>
-                                {% endif %}
-                            </div>
-                            <div>
-                                <p class="font-semibold dark:text-white">{{ request.user.get_full_name }}</p>
-                                <p class="text-sm text-gray-500 dark:text-gray-400">Administrateur</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="py-2">
-                        <a id="theme-toggle" href="#" class="profile-menu-item block px-4 py-3 text-gray-700 hover:bg-gray-50 flex items-center dark:text-gray-300 dark:hover:bg-gray-700">
-                            <i class="fas fa-moon mr-3 text-orange-primary dark:hidden"></i>
-                            <i class="fas fa-sun mr-3 text-orange-primary hidden dark:block"></i>
-                            <span class="dark:hidden">Mode sombre</span>
-                            <span class="hidden dark:inline">Mode clair</span>
-                        </a>
-                        <a href="{% url 'backoffice:profile' %}" class="profile-menu-item block px-4 py-3 text-gray-700 hover:bg-gray-50 flex items-center dark:text-gray-300 dark:hover:bg-gray-700">
-                            <i class="fas fa-user-edit mr-3 text-orange-primary"></i>
-                            Éditer le profil
-                        </a>
-                        <a href="{% url 'backoffice:logout' %}" class="profile-menu-item block px-4 py-3 text-gray-700 hover:bg-gray-50 flex items-center dark:text-gray-300 dark:hover:bg-gray-700">
-                            <i class="fas fa-sign-out-alt mr-3 text-orange-primary"></i>
-                            Déconnexion
-                        </a>
-                    </div>
-
-                    <div class="px-4 py-3 bg-gray-50 text-center text-xs text-gray-500 dark:bg-gray-800 dark:text-gray-400">
-                        Orange Digital Center © {% now "Y" %}
-                    </div>
-                </div>
-            </div>
-        </div>
+  <div class="flex items-center justify-between p-4">
+    <div>
+      <h1 class="text-xl font-bold text-black-primary dark:text-white">Tableau de bord</h1>
+      <p class="text-sm text-gray-500 dark:text-gray-400">Statistiques et indicateurs clés</p>
     </div>
+    <div class="flex items-center space-x-4">
+      <div class="relative hidden md:block">
+        <input type="text" placeholder="Rechercher..." class="pl-10 pr-4 py-2 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white">
+        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+      </div>
+
+      <button class="relative p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 hidden-mobile">
+        <i class="fas fa-bell"></i>
+        <span class="absolute top-0 right-0 bg-orange-primary text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">3</span>
+      </button>
+
+      <!-- Zone de profil avec menu déroulant - Conteneur positionné relativement -->
+      <div class="flex items-center relative" id="profile-container">
+        <button id="profile-btn" class="flex items-center focus:outline-none">
+          <div class="w-10 h-10 rounded-full border-2 border-orange-primary bg-gray-200 flex items-center justify-center dark:bg-gray-800">
+            {% if request.user.is_authenticated and request.user.profile.photo %}
+              <img src="{{ request.user.profile.photo.url }}" alt="Photo de profil" class="w-full h-full rounded-full">
+            {% else %}
+              <i class="fas fa-user text-gray-600 dark:text-gray-400"></i>
+            {% endif %}
+          </div>
+          <span class="ml-2 font-medium dark:text-white hidden-mobile">
+            {% if request.user.is_authenticated %}
+              {% if request.user.get_full_name %}
+                {{ request.user.get_full_name }}
+              {% else %}
+                {{ request.user.username }}
+              {% endif %}
+            {% else %}
+              Invité
+            {% endif %}
+          </span>
+          <i class="fas fa-chevron-down ml-2 text-sm text-gray-500 dark:text-gray-400 hidden-mobile"></i>
+        </button>
+
+        <!-- Menu profil - Positionnement corrigé -->
+        <div id="profile-menu" class="absolute hidden right-0 top-full mt-2 w-60 bg-white rounded-lg shadow-xl z-50 overflow-hidden profile-menu dark:bg-dark-card">
+          <div class="p-4 border-b dark:border-gray-700">
+            <div class="flex items-center">
+              <div class="w-12 h-12 rounded-full border-2 border-orange-primary bg-gray-200 flex items-center justify-center mr-3 dark:bg-gray-800">
+                {% if request.user.is_authenticated and request.user.profile.photo %}
+                  <img src="{{ request.user.profile.photo.url }}" alt="Photo de profil" class="w-full h-full rounded-full">
+                {% else %}
+                  <i class="fas fa-user text-gray-600 dark:text-gray-400"></i>
+                {% endif %}
+              </div>
+              <div>
+                <p class="font-semibold dark:text-white">
+                  {% if request.user.is_authenticated %}
+                    {% if request.user.get_full_name %}
+                      {{ request.user.get_full_name }}
+                    {% else %}
+                      {{ request.user.username }}
+                    {% endif %}
+                  {% else %}
+                    Invité
+                  {% endif %}
+                </p>
+                <p class="text-sm text-gray-500 dark:text-gray-400">
+                  {% if request.user.is_authenticated %}
+                    Administrateur
+                  {% else %}
+                    Non connecté
+                  {% endif %}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="py-2">
+            <a id="theme-toggle" href="#" class="profile-menu-item block px-4 py-3 text-gray-700 hover:bg-gray-50 flex items-center dark:text-gray-300 dark:hover:bg-gray-700">
+              <i class="fas fa-moon mr-3 text-orange-primary dark:hidden"></i>
+              <i class="fas fa-sun mr-3 text-orange-primary hidden dark:block"></i>
+              <span class="dark:hidden">Mode sombre</span>
+              <span class="hidden dark:inline">Mode clair</span>
+            </a>
+
+            {% if request.user.is_authenticated %}
+              <a href="{% url 'backoffice:profile' %}" class="profile-menu-item block px-4 py-3 text-gray-700 hover:bg-gray-50 flex items-center dark:text-gray-300 dark:hover:bg-gray-700">
+                <i class="fas fa-user-edit mr-3 text-orange-primary"></i>
+                Éditer le profil
+              </a>
+              <a href="#" class="profile-menu-item block px-4 py-3 text-gray-700 hover:bg-gray-50 flex items-center dark:text-gray-300 dark:hover:bg-gray-700">
+                <i class="fas fa-shield-alt mr-3 text-orange-primary"></i>
+                Sécurité
+              </a>
+              <a href="{% url 'backoffice:logout' %}" class="profile-menu-item block px-4 py-3 text-gray-700 hover:bg-gray-50 flex items-center dark:text-gray-300 dark:hover:bg-gray-700">
+                <i class="fas fa-sign-out-alt mr-3 text-orange-primary"></i>
+                Déconnexion
+              </a>
+            {% else %}
+              <a href="{% url 'backoffice:login' %}" class="profile-menu-item block px-4 py-3 text-gray-700 hover:bg-gray-50 flex items-center dark:text-gray-300 dark:hover:bg-gray-700">
+                <i class="fas fa-sign-in-alt mr-3 text-orange-primary"></i>
+                Connexion
+              </a>
+            {% endif %}
+          </div>
+
+          <div class="px-4 py-3 bg-gray-50 text-center text-xs text-gray-500 dark:bg-gray-800 dark:text-gray-400">
+            Orange Digital Center © {% now "Y" %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </header>

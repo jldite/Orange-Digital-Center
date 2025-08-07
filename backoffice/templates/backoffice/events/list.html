@@ -1,10 +1,233 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends "backoffice/base.html" %}
 
-</body>
-</html>
+{% block title %}Participants | Orange Digital Center{% endblock %}
+
+{% block participants_active %}active-sidebar-link{% endblock %}
+
+{% block page_title %}Gestion des Utilisateurs{% endblock %}
+{% block page_subtitle %}Liste des utilisateurs de la plateforme{% endblock %}
+
+{% block content %}
+<div class="flex-1 overflow-y-auto p-6 bg-gray-light">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-black-primary">Utilisateurs de la Plateforme</h1>
+    <p class="text-gray-600">Gestion des comptes utilisateurs selon les tags et rôles</p>
+  </div>
+
+  <!-- Filtres et actions -->
+  <div class="bg-white rounded-xl shadow-card p-6 mb-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div class="flex-1">
+        <div class="relative max-w-md">
+          <input type="text" placeholder="Rechercher un utilisateur..." class="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent">
+          <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+        </div>
+      </div>
+
+      <div class="flex flex-wrap gap-2">
+        <select class="rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent">
+          <option>Tous les tags</option>
+          <option>Femme</option>
+          <option>Entrepreneur</option>
+          <option>Étudiant</option>
+          <option>Jeune</option>
+          <option>Startup</option>
+        </select>
+
+        <select class="rounded-lg border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent">
+          <option>Tous les rôles</option>
+          <option>Apprenant</option>
+          <option>Formateur</option>
+          <option>Administrateur</option>
+        </select>
+
+        <button class="bg-orange-primary text-white rounded-lg py-2 px-4 hover:bg-orange-dark flex items-center">
+          <i class="fas fa-filter mr-2"></i> Filtrer
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats utilisateurs -->
+  <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+    <div class="stat-card bg-white rounded-xl shadow-card p-6">
+      <div class="flex items-center">
+        <div class="bg-orange-100 p-3 rounded-full mr-4">
+          <i class="fas fa-users text-orange-primary text-xl"></i>
+        </div>
+        <div>
+          <p class="text-gray-500">Utilisateurs total</p>
+          <p class="text-2xl font-bold text-orange-primary">{{ total_users }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card bg-white rounded-xl shadow-card p-6">
+      <div class="flex items-center">
+        <div class="bg-green-100 p-3 rounded-full mr-4">
+          <i class="fas fa-user-check text-green-600 text-xl"></i>
+        </div>
+        <div>
+          <p class="text-gray-500">Comptes actifs</p>
+          <p class="text-2xl font-bold text-green-600">{{ active_users }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card bg-white rounded-xl shadow-card p-6">
+      <div class="flex items-center">
+        <div class="bg-blue-100 p-3 rounded-full mr-4">
+          <i class="fas fa-user-tag text-blue-600 text-xl"></i>
+        </div>
+        <div>
+          <p class="text-gray-500">Tags utilisés</p>
+          <p class="text-2xl font-bold text-blue-600">{{ used_tags }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stat-card bg-white rounded-xl shadow-card p-6">
+      <div class="flex items-center">
+        <div class="bg-purple-100 p-3 rounded-full mr-4">
+          <i class="fas fa-graduation-cap text-purple-600 text-xl"></i>
+        </div>
+        <div>
+          <p class="text-gray-500">Formations suivies</p>
+          <p class="text-2xl font-bold text-purple-600">{{ avg_trainings|floatformat }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tableau des utilisateurs -->
+  <div class="bg-white rounded-xl shadow-card p-6">
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+      <h2 class="text-xl font-bold">Liste des Utilisateurs</h2>
+      <div class="flex flex-wrap gap-2">
+        <button class="bg-gray-100 rounded-lg py-2 px-4 hover:bg-gray-200 flex items-center">
+          <i class="fas fa-file-export mr-2"></i> Exporter
+        </button>
+        <button class="bg-green-600 text-white rounded-lg py-2 px-4 hover:bg-green-700 flex items-center">
+          <i class="fas fa-plus mr-2"></i> Nouvel utilisateur
+        </button>
+      </div>
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Utilisateur</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Activité</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tags</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
+            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200">
+          {% for user in users %}
+          <tr>
+            <td class="px-6 py-4">
+              <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center mr-3">
+                  {% if user.photo %}
+                    <img src="{{ user.photo.url }}" alt="Photo" class="w-full h-full rounded-full">
+                  {% else %}
+                    <i class="fas fa-user text-gray-600"></i>
+                  {% endif %}
+                </div>
+                <div>
+                  <div class="font-medium text-black-primary">{{ user.full_name }}</div>
+                  <div class="text-sm text-gray-500">Inscrit le {{ user.date_joined|date:"d/m/Y" }}</div>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="text-black-primary">{{ user.email }}</div>
+              {% if user.phone %}
+                <div class="text-sm text-gray-500">{{ user.phone }}</div>
+              {% endif %}
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex items-center">
+                <div class="mr-3 w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+                  <span class="text-orange-primary font-bold">{{ user.event_count }}</span>
+                </div>
+                <div>
+                  <div class="text-black-primary">{{ user.event_count }} événements</div>
+                  <div class="text-sm text-gray-500">{{ user.last_seen|timesince }} en ligne</div>
+                </div>
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex flex-wrap gap-1">
+                {% for tag in user.tags.all %}
+                <span class="px-2 py-1 bg-{{ tag.color }}-100 text-{{ tag.color }}-800 text-xs rounded-full">
+                  {{ tag.name }}
+                </span>
+                {% endfor %}
+              </div>
+            </td>
+            <td class="px-6 py-4">
+              <span class="px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full
+                {% if user.status == 'active' %}bg-green-100 text-green-800
+                {% elif user.status == 'pending' %}bg-yellow-100 text-yellow-800
+                {% else %}bg-red-100 text-red-800{% endif %}">
+                {% if user.status == 'active' %}Actif
+                {% elif user.status == 'pending' %}En attente
+                {% else %}Inactif{% endif %}
+              </span>
+            </td>
+            <td class="px-6 py-4">
+              <div class="flex space-x-2">
+                <button class="text-blue-600 hover:text-blue-800" title="Voir profil">
+                  <i class="fas fa-eye"></i>
+                </button>
+                <button class="text-green-600 hover:text-green-800" title="Modifier">
+                  <i class="fas fa-edit"></i>
+                </button>
+                <button class="text-red-600 hover:text-red-800" title="Supprimer">
+                  <i class="fas fa-trash"></i>
+                </button>
+                <button class="text-orange-primary hover:text-orange-dark" title="Contacter">
+                  <i class="fas fa-envelope"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-6 flex flex-col md:flex-row items-center justify-between gap-4">
+      <div class="text-sm text-gray-500">
+        Affichage de {{ start_index }} à {{ end_index }} sur {{ total_users }} utilisateurs
+      </div>
+      <div class="flex space-x-2">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}" class="px-3 py-1 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100">
+            <i class="fas fa-chevron-left"></i>
+          </a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <span class="px-3 py-1 rounded-lg bg-orange-primary text-white">{{ num }}</span>
+          {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+            <a href="?page={{ num }}" class="px-3 py-1 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100">{{ num }}</a>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}" class="px-3 py-1 rounded-lg border border-gray-300 text-gray-600 hover:bg-gray-100">
+            <i class="fas fa-chevron-right"></i>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

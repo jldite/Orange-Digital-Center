@@ -1,15 +1,21 @@
 import io
+import uuid
 
 import qrcode
+from django.core.files import File
 from django.http import FileResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.template.defaultfilters import slugify
+from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.views.decorators.csrf import csrf_exempt
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count, Q, F
+from django.views.generic import CreateView
+
 from events.models import Event
 from backoffice.models import CustomUser
 from applications.models import Application
@@ -131,6 +137,81 @@ def backoffice_dashboard(request):
     }
     return render(request, 'backoffice/dashboard/dashboard.html', context)
 
+
+class EventForm:
+    pass
+
+
+class EventCreateView(CreateView):
+    model = Event
+    form_class = EventForm
+    template_name = 'backoffice/event_form.html'
+    success_url = reverse_lazy('backoffice:event_list')
+
+    def form_valid(self, form):
+        # Sauvegarde initiale de l'événement
+        event = form.save(commit=False)
+
+        # Générer un slug unique basé sur le titre
+        event.slug = slugify(event.title)
+        if Event.objects.filter(slug=event.slug).exists():
+            event.slug = f"{event.slug}-{uuid.uuid4().hex[:6]}"
+
+        # Sauvegarde finale pour obtenir un ID
+        event.save()
+        form.save_m2m()  # Pour les relations ManyToMany (tags)
+
+        # Génération du QR Code si l'option est cochée
+        if self.request.POST.get('generate_qr') == 'on':
+            self.generate_qr_code(event)
+
+        # Création du message de succès
+        messages.success(
+            self.request,
+            f"L'événement '{event.title}' a été créé avec succès. "
+            f"<a href='{reverse('backoffice:event_detail', args=[event.slug])}' class='text-orange-primary hover:underline'>Voir les détails</a>"
+        )
+
+        return super().form_valid(form)
+
+    def generate_qr_code(self, event):
+        """
+        Génère un QR Code pour l'événement et l'enregistre dans le modèle
+        """
+        # Construction de l'URL publique de l'événement
+        event_url = self.request.build_absolute_uri(
+            reverse('front:event_detail', args=[event.slug])
+        )
+
+        # Création du QR Code
+        qr = qrcode.QRCode(
+            version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=10,
+            border=4,
+        )
+        qr.add_data(event_url)
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="black", back_color="white")
+
+        # Sauvegarde de l'image dans un buffer
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+
+        # Création du nom de fichier
+        filename = f"event_qr_{event.id}_{event.slug}.png"
+
+        # Sauvegarde dans le champ qr_code du modèle
+        event.qr_code.save(filename, File(buffer), save=True)
+        event.save()
+
+        # Ajout d'un message informatif
+        messages.info(
+            self.request,
+            f"Un QR Code a été généré pour l'événement. "
+            f"<a href='{event.qr_code.url}' download class='text-orange-primary hover:underline'>Télécharger</a>"
+        )
 
 @login_required
 def event_list(request):

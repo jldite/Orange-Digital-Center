@@ -2,302 +2,232 @@
 
 {% block title %}Tableau de bord | Orange Digital Center{% endblock %}
 
-{% block dashboard_active %}active-sidebar-link{% endblock %}
-
-{% block page_title %}Tableau de bord{% endblock %}
-{% block page_subtitle %}Statistiques et indicateurs clés{% endblock %}
-
 {% block content %}
-    <!-- Dashboard Content -->
-    <div class="flex-1 overflow-y-auto p-6 bg-gray-light">
-      <div class="mb-8">
-        <h2 class="text-2xl font-bold text-black-primary mb-2">Engage for Change</h2>
-        <p class="text-gray-600 max-w-3xl">Orange s'assure que vos données sont traitées en toute sécurité et confidentialité, avec des mesures techniques et organisationnelles adaptées.</p>
-      </div>
+  <div class="mb-4 md:mb-8">
+    <h2 class="text-xl md:text-2xl font-bold text-black-primary mb-2 dark:text-white">Engage for Change</h2>
+    <p class="text-gray-600 max-w-3xl text-sm md:text-base dark:text-gray-400">
+      Orange s'assure que vos données sont traitées en toute sécurité et confidentialité, avec des mesures techniques et organisationnelles adaptées.
+    </p>
+  </div>
 
-      <!-- Stats Grid -->
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="stat-card bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover">
-          <div class="flex justify-between items-center">
-            <div>
-              <p class="text-gray-500">Événements total</p>
-              <p class="text-3xl font-bold text-orange-primary">{{ total_events }}</p>
-              <div class="mt-2 flex items-center {% if events_variation >= 0 %}text-green-600{% else %}text-red-600{% endif %} text-sm">
-                <i class="fas {% if events_variation >= 0 %}fa-arrow-up{% else %}fa-arrow-down{% endif %} mr-1"></i>
-                <span>{{ abs_events_variation }}% depuis le mois dernier</span>
-              </div>
-            </div>
-            <div class="bg-orange-100 p-3 rounded-full">
-              <i class="fas fa-calendar text-orange-primary text-xl"></i>
-            </div>
-          </div>
-        </div>
+  <!-- Quick Actions -->
+  <div class="mb-4 md:mb-8 flex flex-wrap gap-2 md:gap-4">
+    <a href="{% url 'backoffice/events:creat' %}" class="px-3 py-2 md:px-5 md:py-3 bg-orange-primary text-white rounded-lg font-medium flex items-center hover:bg-orange-dark transition text-sm md:text-base">
+      <i class="fas fa-plus-circle mr-2"></i> Nouvel événement
+    </a>
+    <a href="#" class="px-3 py-2 md:px-5 md:py-3 bg-white text-orange-primary border border-orange-primary rounded-lg font-medium flex items-center hover:bg-orange-50 transition dark:bg-dark-card dark:hover:bg-dark-border text-sm md:text-base">
+      <i class="fas fa-file-pdf mr-2"></i> Générer rapport
+    </a>
+    <a href="#" class="px-3 py-2 md:px-5 md:py-3 bg-white text-orange-primary border border-orange-primary rounded-lg font-medium flex items-center hover:bg-orange-50 transition dark:bg-dark-card dark:hover:bg-dark-border text-sm md:text-base">
+      <i class="fas fa-qrcode mr-2"></i> Créer QR Code
+    </a>
+  </div>
 
-        <div class="stat-card bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover">
-          <div class="flex justify-between items-center">
-            <div>
-              <p class="text-gray-500">Participants</p>
-              <p class="text-3xl font-bold text-orange-primary">{{ approved_applications }}</p>
-              <div class="mt-2 flex items-center text-green-600 text-sm">
-                <i class="fas fa-arrow-up mr-1"></i>
-                <span>18% depuis le mois dernier</span>
-              </div>
-            </div>
-            <div class="bg-orange-100 p-3 rounded-full">
-              <i class="fas fa-users text-orange-primary text-xl"></i>
-            </div>
+  <!-- Stats Grid -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8">
+    <!-- Événements -->
+    <div class="kpi-card stat-card bg-white rounded-xl shadow-card p-4 md:p-6 hover:shadow-card-hover dark:bg-dark-card">
+      <div class="flex justify-between items-center">
+        <div>
+          <p class="text-gray-500 dark:text-gray-400 text-sm md:text-base">Événements total</p>
+          <p class="text-2xl md:text-3xl font-bold text-orange-primary">42</p>
+          <div class="mt-1 md:mt-2 flex items-center text-green-600 text-xs md:text-sm">
+            <i class="fas fa-arrow-up mr-1"></i>
+            <span>12% depuis le mois dernier</span>
           </div>
         </div>
-
-        <div class="stat-card bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover">
-          <div class="flex justify-between items-center">
-            <div>
-              <p class="text-gray-500">Taux de participation</p>
-              <p class="text-3xl font-bold text-orange-primary">{{ participation_rate }}%</p>
-              <div class="mt-2 flex items-center text-green-600 text-sm">
-                <i class="fas fa-arrow-up mr-1"></i>
-                <span>5% depuis le mois dernier</span>
-              </div>
-            </div>
-            <div class="bg-orange-100 p-3 rounded-full">
-              <i class="fas fa-chart-line text-orange-primary text-xl"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Nouvelle carte : Documents archivés -->
-        <div class="stat-card bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover">
-          <div class="flex justify-between items-center">
-            <div>
-              <p class="text-gray-500">Documents archivés</p>
-              <p class="text-3xl font-bold text-orange-primary">{{ archived_count }}</p>
-              <div class="mt-2 text-sm">
-                <span class="text-green-600">+{{ new_archives }} ce mois</span>
-              </div>
-            </div>
-            <div class="bg-orange-100 p-3 rounded-full">
-              <i class="fas fa-archive text-orange-primary text-xl"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Nouvelle carte : Événements par tag -->
-        <div class="stat-card bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover">
-          <div class="flex justify-between items-center">
-            <div>
-              <p class="text-gray-500">Événements par tag</p>
-              <div class="mt-2 space-y-1">
-                {% for tag, count in tag_distribution.items %}
-                <div class="flex justify-between">
-                  <span class="text-sm">{{ tag }}</span>
-                  <span class="font-medium">{{ count }}</span>
-                </div>
-                {% endfor %}
-              </div>
-            </div>
-            <div class="bg-orange-100 p-3 rounded-full">
-              <i class="fas fa-tags text-orange-primary text-xl"></i>
-            </div>
-          </div>
-        </div>
-
-        <!-- Carte de satisfaction détaillée -->
-        <div class="stat-card bg-white rounded-xl shadow-card p-6 hover:shadow-card-hover">
-          <div class="flex justify-between items-center">
-            <div>
-              <p class="text-gray-500">Satisfaction</p>
-              <div class="flex items-center">
-                <p class="text-3xl font-bold text-orange-primary mr-2">{{ satisfaction_rate }}</p>
-                <div class="flex text-orange-primary">
-                  {% for i in "12345"|make_list %}
-                    {% if forloop.counter <= satisfaction_rate|add:"0"|floatformat:"0" %}
-                      <i class="fas fa-star"></i>
-                    {% elif forloop.counter|add:"0" == satisfaction_rate|add:"0"|floatformat:"0"|add:"1" and satisfaction_rate|add:"0"|floatformat:"0" != satisfaction_rate %}
-                      <i class="fas fa-star-half-alt"></i>
-                    {% else %}
-                      <i class="far fa-star"></i>
-                    {% endif %}
-                  {% endfor %}
-                </div>
-              </div>
-              <div class="mt-2 grid grid-cols-2 gap-2">
-                <div class="text-xs">
-                  <span class="font-medium">Formations:</span>
-                  {{ satisfaction_details.training }}%
-                </div>
-                <div class="text-xs">
-                  <span class="font-medium">Conférences:</span>
-                  {{ satisfaction_details.conference }}%
-                </div>
-                <div class="text-xs">
-                  <span class="font-medium">Ateliers:</span>
-                  {{ satisfaction_details.workshop }}%
-                </div>
-                <div class="text-xs">
-                  <span class="font-medium">Événements:</span>
-                  {{ satisfaction_details.event }}%
-                </div>
-              </div>
-            </div>
-            <div class="bg-orange-100 p-3 rounded-full">
-              <i class="fas fa-star text-orange-primary text-xl"></i>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Charts Row -->
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-        <!-- Participation par genre -->
-        <div class="chart-container bg-white rounded-xl shadow-card p-6">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-bold">Participation par genre</h2>
-            <div class="flex space-x-2">
-              <button class="text-xs px-3 py-1 bg-gray-100 rounded-full">Mois</button>
-              <button class="text-xs px-3 py-1 bg-orange-primary text-white rounded-full">Trimestre</button>
-              <button class="text-xs px-3 py-1 bg-gray-100 rounded-full">Année</button>
-            </div>
-          </div>
-          <div class="h-64">
-            <canvas id="genderChart"></canvas>
-          </div>
-          <div class="mt-4 grid grid-cols-2 gap-4">
-            {% for gender, count in gender_data.items %}
-            <div class="bg-gray-100 p-4 rounded-lg">
-              <div class="flex justify-between items-center mb-1">
-                <p class="text-gray-500">{{ gender }}</p>
-                <p class="text-xl font-bold">
-                  {% widthratio count total_users 100 %}%
-                </p>
-              </div>
-              <div class="w-full h-2 bg-gray-300 rounded-full overflow-hidden progress-bar">
-                <div class="bg-orange-primary h-2 rounded-full"
-                     style="width: {% widthratio count total_users 100 %}%"></div>
-              </div>
-            </div>
-            {% endfor %}
-          </div>
-        </div>
-
-        <!-- Événements par type -->
-        <div class="chart-container bg-white rounded-xl shadow-card p-6">
-          <div class="flex justify-between items-center mb-4">
-            <h2 class="text-xl font-bold">Événements par type</h2>
-            <div class="flex space-x-2">
-              <button class="text-xs px-3 py-1 bg-gray-100 rounded-full">Mois</button>
-              <button class="text-xs px-3 py-1 bg-orange-primary text-white rounded-full">Trimestre</button>
-              <button class="text-xs px-3 py-1 bg-gray-100 rounded-full">Année</button>
-            </div>
-          </div>
-          <div class="h-64">
-            <canvas id="eventsChart"></canvas>
-          </div>
-        </div>
-      </div>
-
-      <!-- Section QR Code -->
-      <div class="bg-white rounded-xl shadow-card p-6 mb-8">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-bold">Rapports QR Code</h2>
-          <a href="{% url 'backoffice:qr_codes' %}"
-             class="text-orange-primary hover:text-orange-dark font-medium flex items-center">
-            Voir tout <i class="fas fa-arrow-right ml-2 transition-transform hover:translate-x-1"></i>
-          </a>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {% for event in qr_events %}
-          <div class="border rounded-lg p-4 flex flex-col items-center">
-            <h3 class="font-medium mb-2">{{ event.title }}</h3>
-            <img src="{{ event.qr_code.url }}" alt="QR Code" class="w-32 h-32 mb-2">
-            <p class="text-sm text-gray-500">
-              Scans: {{ event.qr_scans }}
-            </p>
-            <a href="{% url 'backoffice:download_qr' event.id %}"
-               class="mt-2 text-orange-primary hover:underline">
-              <i class="fas fa-download mr-1"></i>Télécharger
-            </a>
-          </div>
-          {% empty %}
-          <p class="text-gray-500">Aucun QR Code disponible pour le moment.</p>
-          {% endfor %}
-        </div>
-      </div>
-
-      <!-- Recent Events -->
-      <div class="bg-white rounded-xl shadow-card p-6 mb-8">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-bold">Derniers événements</h2>
-          <a href="{% url 'backoffice:event_list' %}"
-             class="text-orange-primary hover:text-orange-dark font-medium flex items-center">
-            Voir tout <i class="fas fa-arrow-right ml-2 transition-transform hover:translate-x-1"></i>
-          </a>
-        </div>
-        <!-- Filtrage par tags -->
-        <div class="flex flex-wrap gap-2 mb-4">
-          <span class="font-medium mr-2">Filtrer par tag:</span>
-          {% for tag in all_tags %}
-          <a href="?tag={{ tag.slug }}"
-             class="px-3 py-1 bg-gray-100 rounded-full text-sm hover:bg-orange-100 dark:bg-gray-700">
-              {{ tag.name }}
-          </a>
-          {% endfor %}
-          <a href="?" class="px-3 py-1 bg-orange-100 rounded-full text-sm">
-              Tous
-          </a>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-gray-200">
-            <thead class="bg-gray-50">
-              <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Événement</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Participants</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Statut</th>
-              </tr>
-            </thead>
-            <tbody class="bg-white divide-y divide-gray-200">
-              {% for event in recent_events %}
-              <tr class="event-row {% cycle '' 'bg-gray-50' %}">
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="font-medium text-black-primary">{{ event.title }}</div>
-                  <div class="text-sm text-gray-500">{{ event.location }}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full
-                    {% if event.type == 'FORMATION' %}bg-orange-100 text-orange-primary
-                    {% elif event.type == 'CONF' %}bg-blue-100 text-blue-800
-                    {% else %}bg-purple-100 text-purple-800{% endif %}">
-                    {{ event.get_type_display }}
-                  </span>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">{{ event.start_date|date:"d M Y" }}</div>
-                  <div class="text-xs text-gray-400">{{ event.start_date|time:"H:i" }} - {{ event.end_date|time:"H:i" }}</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  <div class="text-sm text-gray-500">{{ event.applications.count }}</div>
-                  <div class="text-xs text-gray-400">({{ event.applications.approved.count }} approuvés)</div>
-                </td>
-                <td class="px-6 py-4 whitespace-nowrap">
-                  {% if event.end_date < timezone.now %}
-                    <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Terminé</span>
-                  {% elif event.start_date < timezone.now %}
-                    <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">En cours</span>
-                  {% else %}
-                    <span class="status-badge px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">À venir</span>
-                  {% endif %}
-                </td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+        <div class="bg-orange-100 p-2 md:p-3 rounded-full dark:bg-orange-900/30">
+          <i class="fas fa-calendar text-orange-primary text-lg md:text-xl"></i>
         </div>
       </div>
     </div>
+
+    <!-- Participants -->
+    <div class="kpi-card stat-card bg-white rounded-xl shadow-card p-4 md:p-6 hover:shadow-card-hover dark:bg-dark-card">
+      <div class="flex justify-between items-center">
+        <div>
+          <p class="text-gray-500 dark:text-gray-400 text-sm md:text-base">Participants</p>
+          <p class="text-2xl md:text-3xl font-bold text-orange-primary">856</p>
+          <div class="mt-1 md:mt-2 flex items-center text-green-600 text-xs md:text-sm">
+            <i class="fas fa-arrow-up mr-1"></i>
+            <span>18% depuis le mois dernier</span>
+          </div>
+        </div>
+        <div class="bg-orange-100 p-2 md:p-3 rounded-full dark:bg-orange-900/30">
+          <i class="fas fa-users text-orange-primary text-lg md:text-xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Taux de participation -->
+    <div class="kpi-card stat-card bg-white rounded-xl shadow-card p-4 md:p-6 hover:shadow-card-hover dark:bg-dark-card">
+      <div class="flex justify-between items-center">
+        <div>
+          <p class="text-gray-500 dark:text-gray-400 text-sm md:text-base">Taux de participation</p>
+          <p class="text-2xl md:text-3xl font-bold text-orange-primary">78%</p>
+          <div class="mt-1 md:mt-2 flex items-center text-green-600 text-xs md:text-sm">
+            <i class="fas fa-arrow-up mr-1"></i>
+            <span>5% depuis le mois dernier</span>
+          </div>
+        </div>
+        <div class="bg-orange-100 p-2 md:p-3 rounded-full dark:bg-orange-900/30">
+          <i class="fas fa-chart-line text-orange-primary text-lg md:text-xl"></i>
+        </div>
+      </div>
+    </div>
+
+    <!-- Candidatures en attente -->
+    <div class="kpi-card stat-card bg-white rounded-xl shadow-card p-4 md:p-6 hover:shadow-card-hover dark:bg-dark-card">
+      <div class="flex justify-between items-center">
+        <div>
+          <p class="text-gray-500 dark:text-gray-400 text-sm md:text-base">Candidatures en attente</p>
+          <p class="text-2xl md:text-3xl font-bold text-orange-primary">24</p>
+          <div class="mt-1 md:mt-2 flex items-center text-orange-600 text-xs md:text-sm">
+            <i class="fas fa-exclamation-circle mr-1"></i>
+            <span>À traiter</span>
+          </div>
+        </div>
+        <div class="bg-orange-100 p-2 md:p-3 rounded-full dark:bg-orange-900/30">
+          <i class="fas fa-file-alt text-orange-primary text-lg md:text-xl"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Row -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6 md:mb-8">
+    <!-- Participation par genre -->
+    <div class="chart-container bg-white rounded-xl shadow-card p-4 md:p-6 dark:bg-dark-card">
+      <div class="flex justify-between items-center mb-3 md:mb-4">
+        <h2 class="text-lg md:text-xl font-bold dark:text-white">Participation par genre</h2>
+        <div class="flex space-x-1 md:space-x-2">
+          <button class="text-xs px-2 py-1 md:px-3 md:py-1 bg-gray-100 rounded-full dark:bg-dark-border dark:text-gray-300">Mois</button>
+          <button class="text-xs px-2 py-1 md:px-3 md:py-1 bg-orange-primary text-white rounded-full">Trimestre</button>
+          <button class="text-xs px-2 py-1 md:px-3 md:py-1 bg-gray-100 rounded-full dark:bg-dark-border dark:text-gray-300">Année</button>
+        </div>
+      </div>
+      <div class="h-52 md:h-64">
+        <canvas id="genderChart"></canvas>
+      </div>
+    </div>
+
+    <!-- Événements par type -->
+    <div class="chart-container bg-white rounded-xl shadow-card p-4 md:p-6 dark:bg-dark-card">
+      <div class="flex justify-between items-center mb-3 md:mb-4">
+        <h2 class="text-lg md:text-xl font-bold dark:text-white">Événements par type</h2>
+        <div class="flex space-x-1 md:space-x-2">
+          <button class="text-xs px-2 py-1 md:px-3 md:py-1 bg-gray-100 rounded-full dark:bg-dark-border dark:text-gray-300">Mois</button>
+          <button class="text-xs px-2 py-1 md:px-3 md:py-1 bg-orange-primary text-white rounded-full">Trimestre</button>
+          <button class="text-xs px-2 py-1 md:px-3 md:py-1 bg-gray-100 rounded-full dark:bg-dark-border dark:text-gray-300">Année</button>
+        </div>
+      </div>
+      <div class="h-52 md:h-64">
+        <canvas id="eventsChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- QR Codes -->
+  <div class="bg-white rounded-xl shadow-card p-4 md:p-6 mb-6 md:mb-8 dark:bg-dark-card">
+    <div class="flex justify-between items-center mb-3 md:mb-4">
+      <h2 class="text-lg md:text-xl font-bold dark:text-white">Rapports QR Code</h2>
+      <a href="#" class="text-orange-primary hover:text-orange-dark font-medium flex items-center text-sm md:text-base">
+        Voir tout <i class="fas fa-arrow-right ml-1 md:ml-2 transition-transform hover:translate-x-1"></i>
+      </a>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
+      <div class="border rounded-lg p-3 md:p-4 flex flex-col items-center dark:border-dark-border">
+        <h3 class="font-medium mb-1 md:mb-2 dark:text-white text-sm md:text-base">Formation IA</h3>
+        <div class="w-24 h-24 md:w-32 md:h-32 bg-gray-200 flex items-center justify-center mb-1 md:mb-2 dark:bg-dark-border">
+          <i class="fas fa-qrcode text-3xl md:text-4xl text-gray-500 dark:text-gray-400"></i>
+        </div>
+        <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400">
+          Scans: 142
+        </p>
+        <a href="#" class="mt-1 md:mt-2 text-orange-primary hover:underline text-sm">
+          <i class="fas fa-download mr-1"></i>Télécharger
+        </a>
+      </div>
+
+      <div class="border rounded-lg p-3 md:p-4 flex flex-col items-center dark:border-dark-border">
+        <h3 class="font-medium mb-1 md:mb-2 dark:text-white text-sm md:text-base">Atelier IoT</h3>
+        <div class="w-24 h-24 md:w-32 md:h-32 bg-gray-200 flex items-center justify-center mb-1 md:mb-2 dark:bg-dark-border">
+          <i class="fas fa-qrcode text-3xl md:text-4xl text-gray-500 dark:text-gray-400"></i>
+        </div>
+        <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400">
+          Scans: 89
+        </p>
+        <a href="#" class="mt-1 md:mt-2 text-orange-primary hover:underline text-sm">
+          <i class="fas fa-download mr-1"></i>Télécharger
+        </a>
+      </div>
+
+      <div class="border rounded-lg p-3 md:p-4 flex flex-col items-center dark:border-dark-border">
+        <h3 class="font-medium mb-1 md:mb-2 dark:text-white text-sm md:text-base">Conférence Blockchain</h3>
+        <div class="w-24 h-24 md:w-32 md:h-32 bg-gray-200 flex items-center justify-center mb-1 md:mb-2 dark:bg-dark-border">
+          <i class="fas fa-qrcode text-3xl md:text-4xl text-gray-500 dark:text-gray-400"></i>
+        </div>
+        <p class="text-xs md:text-sm text-gray-500 dark:text-gray-400">
+          Scans: 67
+        </p>
+        <a href="#" class="mt-1 md:mt-2 text-orange-primary hover:underline text-sm">
+          <i class="fas fa-download mr-1"></i>Télécharger
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent Events -->
+  <div class="bg-white rounded-xl shadow-card p-4 md:p-6 mb-6 md:mb-8 dark:bg-dark-card">
+    <div class="flex justify-between items-center mb-3 md:mb-4">
+      <h2 class="text-lg md:text-xl font-bold dark:text-white">Événements à venir</h2>
+      <a href="#" class="text-orange-primary hover:text-orange-dark font-medium flex items-center text-sm md:text-base">
+        Voir tout <i class="fas fa-arrow-right ml-1 md:ml-2 transition-transform hover:translate-x-1"></i>
+      </a>
+    </div>
+    <!-- Filtrage par tags -->
+    <div class="flex flex-wrap gap-1 md:gap-2 mb-3 md:mb-4">
+      <span class="font-medium mr-1 md:mr-2 dark:text-gray-300 text-sm md:text-base">Filtrer:</span>
+      <a href="#" class="px-2 py-1 md:px-3 md:py-1 bg-gray-100 rounded-full text-xs md:text-sm hover:bg-orange-100 dark:bg-dark-border dark:hover:bg-orange-900/30">
+        Femme
+      </a>
+      <a href="#" class="px-2 py-1 md:px-3 md:py-1 bg-gray-100 rounded-full text-xs md:text-sm hover:bg-orange-100 dark:bg-dark-border dark:hover:bg-orange-900/30">
+        Entrepreneur
+      </a>
+      <a href="#" class="px-2 py-1 md:px-3 md:py-1 bg-gray-100 rounded-full text-xs md:text-sm hover:bg-orange-100 dark:bg-dark-border dark:hover:bg-orange-900/30">
+        Étudiant
+      </a>
+      <a href="#" class="px-2 py-1 md:px-3 md:py-1 bg-gray-100 rounded-full text-xs md:text-sm hover:bg-orange-100 dark:bg-dark-border dark:hover:bg-orange-900/30">
+        Jeune
+      </a>
+      <a href="#" class="px-2 py-1 md:px-3 md:py-1 bg-gray-100 rounded-full text-xs md:text-sm hover:bg-orange-100 dark:bg-dark-border dark:hover:bg-orange-900/30">
+        Startup
+      </a>
+      <a href="#" class="px-2 py-1 md:px-3 md:py-1 bg-orange-100 rounded-full text-xs md:text-sm dark:bg-orange-900/30">
+        Tous
+      </a>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 text-sm">
+        <thead class="bg-gray-50 dark:bg-dark-border">
+          <tr>
+            <th class="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Événement</th>
+            <th class="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Type</th>
+            <th class="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Date</th>
+            <th class="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Participants</th>
+            <th class="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Statut</th>
+            <th class="px-3 py-2 md:px-6 md:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider dark:text-gray-400">Tags</th>
+          </tr>
+        </thead>
+        <tbody class="bg-white divide-y divide-gray-200 dark:bg-dark-card dark:divide-gray-700">
+          <!-- ... (contenu du tableau) ... -->
+        </tbody>
+      </table>
+    </div>
+  </div>
 {% endblock %}
 
-{% block chart_js %}
+{% block extra_js %}
 <script>
   document.addEventListener('DOMContentLoaded', () => {
     // Graphique participation par genre
@@ -306,9 +236,9 @@
       new Chart(genderCtx, {
         type: 'doughnut',
         data: {
-          labels: {{ gender_labels|safe }},
+          labels: ['Hommes', 'Femmes', 'Autre'],
           datasets: [{
-            data: {{ gender_values|safe }},
+            data: [62, 35, 3],
             backgroundColor: ['#FF7900', '#000000', '#E56E00'],
             borderWidth: 0
           }]
@@ -320,8 +250,11 @@
             legend: {
               position: 'bottom',
               labels: {
-                boxWidth: 12,
-                padding: 20
+                color: '#6B7280',
+                font: {
+                  family: "'Inter', sans-serif",
+                  size: window.innerWidth < 768 ? 10 : 12
+                }
               }
             }
           },
@@ -336,15 +269,15 @@
       new Chart(eventsCtx, {
         type: 'bar',
         data: {
-          labels: {{ event_type_labels|safe }},
+          labels: ['Formation', 'Conférence', 'Atelier', 'Talk', 'Open Lab'],
           datasets: [{
             label: 'Nombre d\'événements',
-            data: {{ event_type_data|safe }},
+            data: [15, 8, 12, 5, 2],
             backgroundColor: '#FF7900',
             borderColor: '#E56E00',
             borderWidth: 1,
             borderRadius: 6,
-            barThickness: 30
+            barThickness: window.innerWidth < 768 ? 20 : 30
           }]
         },
         options: {
@@ -354,15 +287,26 @@
             y: {
               beginAtZero: true,
               grid: {
-                drawBorder: false
+                drawBorder: false,
+                color: '#E5E7EB'
               },
               ticks: {
-                stepSize: 1
+                stepSize: 2,
+                color: '#6B7280',
+                font: {
+                  size: window.innerWidth < 768 ? 10 : 12
+                }
               }
             },
             x: {
               grid: {
                 display: false
+              },
+              ticks: {
+                color: '#6B7280',
+                font: {
+                  size: window.innerWidth < 768 ? 10 : 12
+                }
               }
             }
           },
