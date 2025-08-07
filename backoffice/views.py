@@ -27,7 +27,8 @@ def login_view(request):
     if request.user.is_authenticated:
         if admin_required(request.user):
             return redirect('backoffice:backoffice_dashboard')
-        return redirect('frontoffice:home')
+        # Redirection vers la page d'accueil publique
+        return redirect('home')  # Changé ici
 
     if request.method == 'POST':
         username = request.POST.get('username')
@@ -42,18 +43,10 @@ def login_view(request):
             login(request, user)
             if admin_required(user):
                 return redirect('backoffice:backoffice_dashboard')
-            return redirect('frontoffice:home')
+            # Redirection vers la page d'accueil publique
+            return redirect('home')  # Changé ici
 
     return render(request, 'backoffice/auth/login.html')
-
-@login_required
-def admin_logout(request):
-    """Déconnexion """
-    logout(request)
-    messages.success(request, "Vous avez été déconnecté avec succès.")
-    return redirect('frontoffice:home')
-
-
 # ==============================================
 # VUES DU DASHBOARD ET BACKOFFICE
 # ==============================================

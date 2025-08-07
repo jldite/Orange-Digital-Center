@@ -6,7 +6,7 @@ app_name = 'backoffice'
 urlpatterns = [
     # Authentification
     path('login/', views.login_view, name='login'),
-    path('logout/', views.admin_logout, name='logout'),
+    path('logout/', views.logout_view, name='logout'),
 
     # Dashboard
     path('dashboard/', views.backoffice_dashboard, name='backoffice_dashboard'),
