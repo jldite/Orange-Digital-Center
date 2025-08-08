@@ -5,15 +5,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3218b3e5-496f-4f32-9bbf-4939f9b39d73" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/backoffice/templates/backoffice/events/creat.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/backoffice/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backoffice/templates/backoffice/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/templates/backoffice/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backoffice/templates/backoffice/dashboard/dashboard.html" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/templates/backoffice/dashboard/dashboard.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backoffice/templates/backoffice/events/list.html" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/templates/backoffice/events/list.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backoffice/templates/backoffice/partials/sidebar.html" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/templates/backoffice/partials/sidebar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/backoffice/templates/backoffice/partials/topbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/templates/backoffice/partials/topbar.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OrangeDigitalCenter/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/OrangeDigitalCenter/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/OrangeDigitalCenter/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/OrangeDigitalCenter/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backoffice/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backoffice/templates/backoffice/events/creat.html" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/templates/backoffice/events/create.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/backoffice/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/views.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/events/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/events/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/frontoffice/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/frontoffice/models.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,8 +23,8 @@
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
       <list>
-        <option value="Python Script" />
         <option value="HTML File" />
+        <option value="Python Script" />
       </list>
     </option>
   </component>

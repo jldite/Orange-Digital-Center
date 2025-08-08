@@ -1,80 +1,86 @@
-from django.db import models
-from django.conf import settings
 import uuid
-from io import BytesIO
-from django.core.files.base import ContentFile
-import qrcode
 
-# Choix de statuts pour les inscriptions
-STATUS_CHOICES = [
-    ('pending', 'En attente'),
-    ('approved', 'Approuvé'),
-    ('rejected', 'Rejeté'),
-]
+from django.conf import settings
+from django.core.validators import MinValueValidator
+from django.db import models
+from django.utils.text import slugify
 
-# Choix de lieux pour les événements
-LOCATION_CHOICES = [
-    ('digital', 'Digital'),
-    ('fablab', 'Fab Lab'),
-    ('fab', 'Fab'),
-    ('odc_clubs', 'ODC Clubs'),
-]
 
 class Event(models.Model):
-    TYPE_CHOICES = [
-        ('formation', 'Formation'),
-        ('conference', 'Conférence'),
-        ('talk', 'Talk'),
-        ('open_lab', 'Open Lab'),
-        ('fab_cafe', 'Fab Café'),
-        ('master_class', 'Master Class'),
-        ('atelier', 'Atelier'),
-        ('super_codeurs', 'Super Codeurs'),
-        ('maker_junior', 'Maker Junior'),
-    ]
+    EVENT_TYPES = (
+        ('FORMATION', 'Formation'),
+        ('CONFERENCE', 'Conférence'),
+        ('ATELIER', 'Atelier'),
+        ('TALK', 'Talk'),
+        ('OPEN_LAB', 'Open Lab'),
+        ('MASTER_CLASS', 'Master Class'),
+        ('SUPER_CODEURS', 'Super Codeurs'),
+        ('MAKER_JUNIOR', 'Maker Junior'),
+    )
+
+    LOCATIONS = (
+        ('DIGITAL', 'Digital'),
+        ('FAB_LAB', 'Fab Lab'),
+        ('ODC_CLUB', 'ODC Club'),
+        ('ONLINE', 'En ligne'),
+    )
+
+    TAGS = (
+        ('FEMME', 'Femmes'),
+        ('ETUDIANT', 'Étudiants'),
+        ('JEUNE', 'Jeunes'),
+        ('ENTREPRENEUR', 'Entrepreneurs'),
+        ('STARTUP', 'Startups'),
+        ('PROFESSIONNEL', 'Professionnels'),
+    )
+    cover_image = models.ImageField(
+        upload_to='event_cover_images/',
+        blank=True,
+        null=True,
+        verbose_name="Image de couverture",
+        help_text="Image représentative de l'événement (format: JPG, PNG)"
+    )
+
+    qr_code = models.FileField(
+        upload_to='event_qr_codes/',
+        blank=True,
+        null=True,
+        verbose_name="QR Code"
+    )
 
     title = models.CharField(max_length=200)
-    event_type = models.CharField(max_length=50, choices=TYPE_CHOICES)
-    location = models.CharField(max_length=50, choices=LOCATION_CHOICES)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    description = models.TextField()
+    type = models.CharField(max_length=50, choices=EVENT_TYPES)
+    location = models.CharField(max_length=50, choices=LOCATIONS)
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    description = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)  # ✅ Ajouté ici
+    capacity = models.PositiveIntegerField( default=30,
+        validators=[MinValueValidator(1)],
+        verbose_name="Capacité maximale")
+    image = models.ImageField(upload_to='event_images/', blank=True, null=True)
+    qr_code = models.ImageField(upload_to='event_qr_codes/', blank=True, null=True)
+    tags = models.CharField(max_length=100, choices=TAGS, blank=True)
+    instructions = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.title
 
 class Registration(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE,related_name='event_registrations')
-    event = models.ForeignKey(Event,on_delete=models.CASCADE,related_name='registrations')
+    event = models.ForeignKey('Event', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     registration_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
-    qr_code = models.ImageField(upload_to='qrcodes/', blank=True)
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('PENDING', 'En attente'),
+            ('CONFIRMED', 'Confirmé'),
+            ('CANCELED', 'Annulé'),
+        ],
+        default='PENDING'
+    )
 
-    def save(self, *args, **kwargs):
-        if not self.qr_code:
-            self.generate_qr_code()
-        super().save(*args, **kwargs)
-
-    def generate_qr_code(self):
-
-        data = f"REG:{self.id}:{self.user.id}"
-        qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=10,
-            border=4,
-        )
-
-        unique_id = uuid.uuid4().hex
-        data = f"REG:{self.id}:{self.user.id}:{unique_id}"
-        qr.add_data(data)
-        qr.make(fit=True)
-
-        img = qr.make_image(fill_color="black", back_color="white")
-        buffer = BytesIO()
-        img.save(buffer, format='PNG')
-
-        filename = f'qr_{self.user.username}_{self.event.id}.png'
-        self.qr_code.save(filename, ContentFile(buffer.getvalue()), save=False)
-        buffer.close()
+    class Meta:
+        unique_together = ('event', 'user')

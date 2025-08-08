@@ -20,8 +20,7 @@ class CustomUser(AbstractUser):
     GENDER_CHOICES = [
         ('M', 'Homme'),
         ('F', 'Femme'),
-        ('O', 'Autre'),
-        ('P', 'Préfère ne pas dire'),
+
     ]
 
     ROLE_CHOICES = [

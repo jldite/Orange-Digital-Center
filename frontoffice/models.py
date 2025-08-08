@@ -34,10 +34,10 @@ class EventRegistration(models.Model):
     # Nouveau champ pour lier à l'inscription backoffice
     backoffice_registration = models.OneToOneField(
         'events.Registration',
+        related_name='frontoffice_registration',
         on_delete=models.SET_NULL,
         null=True,
         blank=True,
-        related_name='frontoffice_counterpart',
         verbose_name="Inscription Backoffice"
     )
     status = models.CharField(
