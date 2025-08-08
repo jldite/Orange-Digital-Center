@@ -3,27 +3,6 @@
 
 {% block title %}Nouvel événement | Orange Digital Center{% endblock %}
 
-{% block extra_css %}
-<style>
-    .image-preview {
-        border: 2px dashed #e5e7eb;
-        border-radius: 0.5rem;
-        transition: border-color 0.3s;
-    }
-    .image-preview:hover {
-        border-color: #FF7900;
-    }
-    .image-preview img {
-        max-width: 100%;
-        max-height: 300px;
-        object-fit: cover;
-    }
-    .dark .image-preview {
-        border-color: #4b5563;
-    }
-</style>
-{% endblock %}
-
 {% block content %}
 <div class="bg-white dark:bg-dark-card rounded-xl shadow-card p-6 mb-8 max-w-4xl mx-auto">
     <h2 class="text-2xl font-bold text-black-primary dark:text-white mb-6">Créer un nouvel événement</h2>
@@ -36,7 +15,7 @@
             <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-gray-700 dark:text-gray-300 mb-2">Titre de l'événement</label>
-                    {% render_field form.title class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" placeholder="Formation IA avancée" %}
+                    {{ form.title|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white"|attr:"placeholder:Formation IA avancée" }}
                     {% for error in form.title.errors %}
                         <p class="text-red-500 text-sm mt-1">{{ error }}</p>
                     {% endfor %}
@@ -48,7 +27,7 @@
                         <!-- Aperçu de l'image -->
                         <div id="image-preview" class="image-preview mb-3 w-full flex items-center justify-center overflow-hidden {% if not form.cover_image.value %}hidden{% endif %}">
                             {% if form.cover_image.value %}
-                                <img id="preview-img" src="{{ form.cover_image.value.url }}" alt="Aperçu de l'image">
+                                <img id="preview-img" src="{{ form.cover_image.value.url }}" alt="Aperçu de l'image" class="max-w-full max-h-64">
                             {% else %}
                                 <img id="preview-img" src="" alt="Aperçu de l'image" class="hidden">
                             {% endif %}
@@ -60,12 +39,12 @@
                         </label>
                         <span id="file-name" class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             {% if form.cover_image.value %}
-                                {{ form.cover_image.value.name|basename }}
+                                {{ form.cover_image.value.name }}
                             {% else %}
                                 Aucune image sélectionnée
                             {% endif %}
                         </span>
-                        {% render_field form.cover_image class="hidden" %}
+                        {{ form.cover_image|add_class:"hidden" }}
                     </div>
                     {% for error in form.cover_image.errors %}
                         <p class="text-red-500 text-sm mt-1">{{ error }}</p>
@@ -76,7 +55,7 @@
             <!-- Description -->
             <div class="md:col-span-2">
                 <label class="block text-gray-700 dark:text-gray-300 mb-2">Description</label>
-                {% render_field form.description class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" placeholder="Décrivez l'événement en détail..." rows="4" %}
+                {{ form.description|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white"|attr:"placeholder:Décrivez l&#39;événement en détail..."|attr:"rows:4" }}
                 {% for error in form.description.errors %}
                     <p class="text-red-500 text-sm mt-1">{{ error }}</p>
                 {% endfor %}
@@ -85,7 +64,7 @@
             <!-- Type et Lieu -->
             <div>
                 <label class="block text-gray-700 dark:text-gray-300 mb-2">Type d'événement</label>
-                {% render_field form.type class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" %}
+                {{ form.type|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" }}
                 {% for error in form.type.errors %}
                     <p class="text-red-500 text-sm mt-1">{{ error }}</p>
                 {% endfor %}
@@ -93,7 +72,7 @@
 
             <div>
                 <label class="block text-gray-700 dark:text-gray-300 mb-2">Lieu</label>
-                {% render_field form.location class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" %}
+                {{ form.location|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" }}
                 {% for error in form.location.errors %}
                     <p class="text-red-500 text-sm mt-1">{{ error }}</p>
                 {% endfor %}
@@ -102,7 +81,7 @@
             <!-- Dates -->
             <div>
                 <label class="block text-gray-700 dark:text-gray-300 mb-2">Date et heure de début</label>
-                {% render_field form.start_date class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" %}
+                {{ form.start_date|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" }}
                 {% for error in form.start_date.errors %}
                     <p class="text-red-500 text-sm mt-1">{{ error }}</p>
                 {% endfor %}
@@ -110,7 +89,7 @@
 
             <div>
                 <label class="block text-gray-700 dark:text-gray-300 mb-2">Date et heure de fin</label>
-                {% render_field form.end_date class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" %}
+                {{ form.end_date|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" }}
                 {% for error in form.end_date.errors %}
                     <p class="text-red-500 text-sm mt-1">{{ error }}</p>
                 {% endfor %}
@@ -118,7 +97,7 @@
 
             <div>
                 <label class="block text-gray-700 dark:text-gray-300 mb-2">Date limite d'inscription</label>
-                {% render_field form.registration_deadline class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" %}
+                {{ form.registration_deadline|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" }}
                 {% for error in form.registration_deadline.errors %}
                     <p class="text-red-500 text-sm mt-1">{{ error }}</p>
                 {% endfor %}
@@ -126,7 +105,7 @@
 
             <div>
                 <label class="block text-gray-700 dark:text-gray-300 mb-2">Capacité maximale</label>
-                {% render_field form.capacity class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" %}
+                {{ form.capacity|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" }}
                 {% for error in form.capacity.errors %}
                     <p class="text-red-500 text-sm mt-1">{{ error }}</p>
                 {% endfor %}
@@ -135,17 +114,17 @@
             <!-- Options de publication -->
             <div class="flex flex-col gap-3">
                 <label class="flex items-center">
-                    {% render_field form.is_published class="h-4 w-4 text-orange-primary focus:ring-orange-primary border-gray-300 rounded" %}
+                    {{ form.is_published|add_class:"h-4 w-4 text-orange-primary focus:ring-orange-primary border-gray-300 rounded" }}
                     <span class="ml-2 text-gray-700 dark:text-gray-300">{{ form.is_published.label }}</span>
                 </label>
 
                 <label class="flex items-center">
-                    {% render_field form.requires_approval class="h-4 w-4 text-orange-primary focus:ring-orange-primary border-gray-300 rounded" %}
+                    {{ form.requires_approval|add_class:"h-4 w-4 text-orange-primary focus:ring-orange-primary border-gray-300 rounded" }}
                     <span class="ml-2 text-gray-700 dark:text-gray-300">{{ form.requires_approval.label }}</span>
                 </label>
 
                 <label class="flex items-center">
-                    {% render_field form.generate_qr class="h-4 w-4 text-orange-primary focus:ring-orange-primary border-gray-300 rounded" %}
+                    {{ form.generate_qr|add_class:"h-4 w-4 text-orange-primary focus:ring-orange-primary border-gray-300 rounded" }}
                     <span class="ml-2 text-gray-700 dark:text-gray-300">Générer un QR Code pour cet événement</span>
                 </label>
             </div>
@@ -153,7 +132,7 @@
             <!-- Tags -->
             <div class="md:col-span-2">
                 <label class="block text-gray-700 dark:text-gray-300 mb-2">Tags (Public cible)</label>
-                {% render_field form.tags class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" %}
+                {{ form.tags|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" }}
                 <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Séparer les tags par des virgules</p>
                 {% for error in form.tags.errors %}
                     <p class="text-red-500 text-sm mt-1">{{ error }}</p>

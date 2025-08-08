@@ -20,10 +20,12 @@ from django.views.generic import CreateView
 from events.models import Event
 from backoffice.models import CustomUser
 from applications.models import Application
+from .forms import EventForm  # Importez le formulaire depuis forms.py
 
 
 def admin_required(user):
     return user.is_authenticated and (user.is_staff or user.is_superuser or getattr(user, 'is_admin', False))
+
 
 # ==============================================
 # VUES D'AUTHENTIFICATION
@@ -63,11 +65,14 @@ def login_view(request):
 
     return render(request, 'backoffice/auth/login.html')
 
+
 @login_required
 def logout_view(request):
     logout(request)
     messages.success(request, "Vous avez été déconnecté.")
     return redirect('frontoffice:home')
+
+
 # ==============================================
 # VUES DU DASHBOARD ET BACKOFFICE
 # ==============================================
@@ -103,11 +108,12 @@ def backoffice_dashboard(request):
         gender_values.append(item['count'])
 
     # Données pour graphique événements par type
-    event_types = Event.TYPE_CHOICES
+    # CORRECTION: Utilisez la méthode correcte pour obtenir les choix
+    event_types = Event._meta.get_field('type').choices
     event_type_data = []
     event_type_labels = []
     for type_id, type_name in event_types:
-        count = Event.objects.filter(event_type=type_id).count()
+        count = Event.objects.filter(type=type_id).count()  # CORRECTION: 'type' au lieu de 'event_type'
         event_type_data.append(count)
         event_type_labels.append(type_name)
 
@@ -139,9 +145,7 @@ def backoffice_dashboard(request):
     return render(request, 'backoffice/dashboard/dashboard.html', context)
 
 
-class EventForm:
-    pass
-
+# SUPPRIMEZ LA CLASSE EventForm ICI CAR ELLE EST DÉJÀ DANS forms.py
 
 class EventCreateView(CreateView):
     model = Event
@@ -172,43 +176,13 @@ class EventCreateView(CreateView):
         messages.success(
             self.request,
             f"L'événement '{event.title}' a été créé avec succès. "
-            f"<a href='{reverse('backoffice:event_detail', args=[event.pk])}' class='text-orange-primary hover:underline'>Voir les détails</a>"
+            f"<a href='{reverse('backoffice:event_detail', kwargs={'pk': event.pk})}' class='text-orange-primary hover:underline'>Voir les détails</a>"
         )
 
         return super().form_valid(form)
 
     def generate_qr_code(self, event):
         """Génère un QR Code pour l'événement"""
-        event_url = self.request.build_absolute_uri(
-            reverse('front:event_detail', args=[event.id])
-        )
-
-        qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=10,
-            border=4,
-        )
-        qr.add_data(event_url)
-        qr.make(fit=True)
-
-        img = qr.make_image(fill_color="black", back_color="white")
-        buffer = io.BytesIO()
-        img.save(buffer, format="PNG")
-
-        file_name = f"qr_event_{event.id}.png"
-        event.qr_code.save(file_name, ContentFile(buffer.getvalue()), save=True)
-
-        messages.info(
-            self.request,
-            f"Un QR Code a été généré pour l'événement. "
-            f"<a href='{event.qr_code.url}' download class='text-orange-primary hover:underline'>Télécharger</a>"
-        )
-
-    def generate_qr_code(self, event):
-        """
-        Génère un QR Code pour l'événement et l'enregistre dans le modèle
-        """
         # Construction de l'URL publique de l'événement
         event_url = self.request.build_absolute_uri(
             reverse('front:event_detail', args=[event.slug])
@@ -229,20 +203,18 @@ class EventCreateView(CreateView):
         # Sauvegarde de l'image dans un buffer
         buffer = io.BytesIO()
         img.save(buffer, format="PNG")
+        file_name = f"qr_event_{event.id}.png"
 
-        # Création du nom de fichier
-        filename = f"event_qr_{event.id}_{event.slug}.png"
-
-        # Sauvegarde dans le champ qr_code du modèle
-        event.qr_code.save(filename, File(buffer), save=True)
+        # Sauvegarde dans le champ qr_code
+        event.qr_code.save(file_name, ContentFile(buffer.getvalue()), save=True)
         event.save()
 
-        # Ajout d'un message informatif
         messages.info(
             self.request,
             f"Un QR Code a été généré pour l'événement. "
             f"<a href='{event.qr_code.url}' download class='text-orange-primary hover:underline'>Télécharger</a>"
         )
+
 
 @login_required
 def event_list(request):
@@ -345,18 +317,22 @@ def system_settings(request):
     # ...
     return render(request, 'backoffice/system/settings.html')
 
+
 def home_view(request):
     """Vue pour la page d'accueil"""
     return render(request, 'home.html')
+
 
 @login_required
 def profile(request):
     return user_detail(request, request.user.id)
 
+
 @login_required
 def qr_codes_view(request):
     events = Event.objects.all()
     return render(request, 'backoffice/dashboard/qr_codes.html', {'events': events})
+
 
 @login_required
 def download_qr(request, event_id):

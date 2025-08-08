@@ -1,10 +1,8 @@
-import uuid
 
 from django.conf import settings
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.text import slugify
-
 
 class Event(models.Model):
     EVENT_TYPES = (
@@ -33,6 +31,8 @@ class Event(models.Model):
         ('STARTUP', 'Startups'),
         ('PROFESSIONNEL', 'Professionnels'),
     )
+
+    # SUPPRIMER les doublons et garder UN SEUL champ qr_code
     cover_image = models.ImageField(
         upload_to='event_cover_images/',
         blank=True,
@@ -41,7 +41,8 @@ class Event(models.Model):
         help_text="Image représentative de l'événement (format: JPG, PNG)"
     )
 
-    qr_code = models.FileField(
+    # Garder UN SEUL champ qr_code
+    qr_code = models.ImageField(
         upload_to='event_qr_codes/',
         blank=True,
         null=True,
@@ -51,16 +52,24 @@ class Event(models.Model):
     title = models.CharField(max_length=200)
     slug = models.SlugField(max_length=255, unique=True, blank=True)
     description = models.TextField()
-    type = models.CharField(max_length=50, choices=EVENT_TYPES)
-    location = models.CharField(max_length=50, choices=LOCATIONS)
+    type = models.CharField(
+        max_length=50,
+        choices=EVENT_TYPES,
+        default='FORMATION',
+        verbose_name="Type d'événement"
+    )
+    location = models.CharField(
+        max_length=50,
+        choices=LOCATIONS,
+        default='DIGITAL'
+    )
     start_date = models.DateTimeField()
     end_date = models.DateTimeField()
-    capacity = models.PositiveIntegerField( default=30,
+    capacity = models.PositiveIntegerField(
+        default=30,
         validators=[MinValueValidator(1)],
-        verbose_name="Capacité maximale")
-    image = models.ImageField(upload_to='event_images/', blank=True, null=True)
-    qr_code = models.ImageField(upload_to='event_qr_codes/', blank=True, null=True)
-    tags = models.CharField(max_length=100, choices=TAGS, blank=True)
+        verbose_name="Capacité maximale"
+    )
     instructions = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -69,16 +78,18 @@ class Event(models.Model):
         return self.title
 
 class Registration(models.Model):
-    event = models.ForeignKey('Event', on_delete=models.CASCADE)
+    STATUS_CHOICES = (
+        ('PENDING', 'En attente'),
+        ('CONFIRMED', 'Confirmé'),
+        ('CANCELED', 'Annulé'),
+    )
+
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     registration_date = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
         max_length=20,
-        choices=[
-            ('PENDING', 'En attente'),
-            ('CONFIRMED', 'Confirmé'),
-            ('CANCELED', 'Annulé'),
-        ],
+        choices=STATUS_CHOICES,
         default='PENDING'
     )
 
