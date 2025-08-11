@@ -1,42 +1,198 @@
 {% extends "backoffice/base.html" %}
-{% load widget_tweaks static %}
+{% load static %}
 
 {% block title %}Nouvel événement | Orange Digital Center{% endblock %}
 
+{% block extra_css %}
+<style>
+    /* Styles d'animation */
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .animate-fade-in {
+        animation: fadeIn 0.3s ease-out forwards;
+    }
+
+    .animate-spin {
+        animation: spin 1s linear infinite;
+    }
+
+    .smooth-transition {
+        transition: all 0.3s ease;
+    }
+
+    .progress-bar {
+        height: 4px;
+        background-color: #FF7900;
+        width: 0%;
+        transition: width 0.4s ease;
+    }
+
+    /* Aperçu d'image */
+    .image-preview-placeholder {
+        border: 2px dashed #d1d5db;
+        border-radius: 0.5rem;
+        padding: 1.5rem;
+        text-align: center;
+        background-color: #f9fafb;
+    }
+
+    .dark .image-preview-placeholder {
+        border-color: #4b5563;
+        background-color: #1f2937;
+    }
+
+    /* Tags */
+    .tag-selector {
+        display: inline-flex;
+        align-items: center;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.75rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+        background-color: #f3f4f6;
+        border: 1px solid #e5e7eb;
+    }
+
+    .dark .tag-selector {
+        background-color: #1f2937;
+        border: 1px solid #374151;
+    }
+
+    .tag-selector:hover {
+        background-color: rgba(255, 121, 0, 0.2);
+    }
+
+    .tag-selector input[type="checkbox"] {
+        margin-right: 0.5rem;
+    }
+
+    .tag-selector.selected {
+        background-color: rgba(255, 121, 0, 0.3);
+        border: 1px solid #FF7900;
+    }
+
+    /* STYLES SPÉCIFIQUES POUR LES CHAMPS */
+    .form-field {
+        display: block;
+        width: 100%;
+        padding: 0.75rem;
+        background-color: #fff;
+        border: 1px solid #d1d5db;
+        border-radius: 0.5rem;
+        color: #111827;
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+    }
+
+    .dark .form-field {
+        background-color: #1e293b;
+        border-color: #334155;
+        color: #f1f5f9;
+    }
+
+    .form-field:focus {
+        outline: none;
+        border-color: #FF7900;
+        box-shadow: 0 0 0 3px rgba(255, 121, 0, 0.2);
+    }
+
+    .form-field::placeholder {
+        color: #9ca3af;
+    }
+
+    .dark .form-field::placeholder {
+        color: #64748b;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #374151;
+        font-weight: 500;
+        font-size: 0.875rem;
+    }
+
+    .dark .form-label {
+        color: #cbd5e1;
+    }
+
+    .form-checkbox {
+        width: 1rem;
+        height: 1rem;
+        border: 1px solid #d1d5db;
+        border-radius: 0.25rem;
+        background-color: white;
+        accent-color: #FF7900;
+    }
+
+    .dark .form-checkbox {
+        border: 1px solid #475569;
+        background-color: #1e293b;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="bg-white dark:bg-dark-card rounded-xl shadow-card p-6 mb-8 max-w-4xl mx-auto">
-    <h2 class="text-2xl font-bold text-black-primary dark:text-white mb-6">Créer un nouvel événement</h2>
+    <div class="flex justify-between items-center mb-6">
+        <h2 class="text-2xl font-bold text-black-primary dark:text-white">Créer un nouvel événement</h2>
+        <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
+            <i class="far fa-save mr-1"></i>
+            <span>Enregistrement automatique activé</span>
+        </div>
+    </div>
 
-    <form method="post" enctype="multipart/form-data">
+    <form id="event-form" method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Barre de progression -->
+        <div class="progress-bar mb-4"></div>
+
+        <div class="space-y-6">
             <!-- Titre et Image -->
-            <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
-                    <label class="block text-gray-700 dark:text-gray-300 mb-2">Titre de l'événement</label>
-                    {{ form.title|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white"|attr:"placeholder:Formation IA avancée" }}
+                    <label class="form-label">
+                        Titre de l'événement <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.title|add_class:"form-field"|attr:"placeholder:Formation IA avancée" }}
                     {% for error in form.title.errors %}
-                        <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
                     {% endfor %}
                 </div>
 
                 <div>
-                    <label class="block text-gray-700 dark:text-gray-300 mb-2">Image de couverture</label>
+                    <label class="form-label">
+                        Image de couverture <span class="text-red-500">*</span>
+                    </label>
                     <div class="flex flex-col items-start">
                         <!-- Aperçu de l'image -->
-                        <div id="image-preview" class="image-preview mb-3 w-full flex items-center justify-center overflow-hidden {% if not form.cover_image.value %}hidden{% endif %}">
-                            {% if form.cover_image.value %}
-                                <img id="preview-img" src="{{ form.cover_image.value.url }}" alt="Aperçu de l'image" class="max-w-full max-h-64">
-                            {% else %}
-                                <img id="preview-img" src="" alt="Aperçu de l'image" class="hidden">
-                            {% endif %}
+                        <div id="image-preview" class="image-preview mb-3 w-full flex items-center justify-center overflow-hidden rounded-lg border border-dashed border-gray-300 dark:border-gray-700">
+                            <div id="image-preview-placeholder" class="image-preview-placeholder text-center w-full">
+                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                                <p class="text-gray-500 dark:text-gray-400">Glissez une image ici ou cliquez pour télécharger</p>
+                                <p class="text-sm text-gray-400 mt-1">Dimensions recommandées : 1200x630px</p>
+                            </div>
+                            <img id="preview-img" src="{% if form.cover_image.value %}{{ form.cover_image.value.url }}{% endif %}" alt="Aperçu de l'image" class="{% if not form.cover_image.value %}hidden{% endif %} max-w-full max-h-64">
                         </div>
 
                         <!-- Bouton de téléchargement -->
-                        <label for="id_cover_image" class="cursor-pointer bg-orange-100 text-orange-primary px-4 py-2 rounded-lg font-medium hover:bg-orange-200 transition dark:bg-orange-900/30 dark:hover:bg-orange-800/50">
+                        <label for="id_cover_image" class="cursor-pointer bg-orange-100 text-orange-primary px-4 py-2 rounded-lg font-medium hover:bg-orange-200 transition smooth-transition dark:bg-orange-900/30 dark:hover:bg-orange-800/50">
                             <i class="fas fa-upload mr-2"></i>Choisir une image
                         </label>
+                        {{ form.cover_image|add_class:"hidden" }}
                         <span id="file-name" class="text-sm text-gray-500 dark:text-gray-400 mt-1">
                             {% if form.cover_image.value %}
                                 {{ form.cover_image.value.name }}
@@ -44,144 +200,328 @@
                                 Aucune image sélectionnée
                             {% endif %}
                         </span>
-                        {{ form.cover_image|add_class:"hidden" }}
                     </div>
                     {% for error in form.cover_image.errors %}
-                        <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
                     {% endfor %}
                 </div>
             </div>
 
             <!-- Description -->
-            <div class="md:col-span-2">
-                <label class="block text-gray-700 dark:text-gray-300 mb-2">Description</label>
-                {{ form.description|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white"|attr:"placeholder:Décrivez l&#39;événement en détail..."|attr:"rows:4" }}
+            <div>
+                <label class="form-label">
+                    Description <span class="text-red-500">*</span>
+                </label>
+                {{ form.description|add_class:"form-field"|attr:"placeholder:Décrivez l'événement en détail..."|attr:"rows:4" }}
                 {% for error in form.description.errors %}
-                    <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
                 {% endfor %}
             </div>
 
             <!-- Type et Lieu -->
-            <div>
-                <label class="block text-gray-700 dark:text-gray-300 mb-2">Type d'événement</label>
-                {{ form.type|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" }}
-                {% for error in form.type.errors %}
-                    <p class="text-red-500 text-sm mt-1">{{ error }}</p>
-                {% endfor %}
-            </div>
-
-            <div>
-                <label class="block text-gray-700 dark:text-gray-300 mb-2">Lieu</label>
-                {{ form.location|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" }}
-                {% for error in form.location.errors %}
-                    <p class="text-red-500 text-sm mt-1">{{ error }}</p>
-                {% endfor %}
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="form-label">
+                        Type d'événement <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.type|add_class:"form-field" }}
+                    {% for error in form.type.errors %}
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div>
+                    <label class="form-label">
+                        Lieu <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.location|add_class:"form-field" }}
+                    {% for error in form.location.errors %}
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
+                    {% endfor %}
+                </div>
             </div>
 
             <!-- Dates -->
-            <div>
-                <label class="block text-gray-700 dark:text-gray-300 mb-2">Date et heure de début</label>
-                {{ form.start_date|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" }}
-                {% for error in form.start_date.errors %}
-                    <p class="text-red-500 text-sm mt-1">{{ error }}</p>
-                {% endfor %}
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div>
+                    <label class="form-label">
+                        Date et heure de début <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.start_date|add_class:"form-field" }}
+                    {% for error in form.start_date.errors %}
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div>
+                    <label class="form-label">
+                        Date et heure de fin <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.end_date|add_class:"form-field" }}
+                    {% for error in form.end_date.errors %}
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div>
+                    <label class="form-label">
+                        Date limite d'inscription <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.registration_deadline|add_class:"form-field" }}
+                    {% for error in form.registration_deadline.errors %}
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
+                    {% endfor %}
+                </div>
             </div>
 
-            <div>
-                <label class="block text-gray-700 dark:text-gray-300 mb-2">Date et heure de fin</label>
-                {{ form.end_date|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" }}
-                {% for error in form.end_date.errors %}
-                    <p class="text-red-500 text-sm mt-1">{{ error }}</p>
-                {% endfor %}
-            </div>
+            <!-- Capacité et Options -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="form-label">
+                        Capacité maximale <span class="text-red-500">*</span>
+                    </label>
+                    {{ form.capacity|add_class:"form-field" }}
+                    {% for error in form.capacity.errors %}
+                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
+                    {% endfor %}
+                </div>
 
-            <div>
-                <label class="block text-gray-700 dark:text-gray-300 mb-2">Date limite d'inscription</label>
-                {{ form.registration_deadline|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" }}
-                {% for error in form.registration_deadline.errors %}
-                    <p class="text-red-500 text-sm mt-1">{{ error }}</p>
-                {% endfor %}
-            </div>
+                <div class="flex flex-col justify-center">
+                    <div class="flex flex-col gap-3">
+                        <label class="flex items-center">
+                            {{ form.is_published|add_class:"form-checkbox" }}
+                            <span class="ml-2 form-label">
+                                {{ form.is_published.label }}
+                            </span>
+                        </label>
 
-            <div>
-                <label class="block text-gray-700 dark:text-gray-300 mb-2">Capacité maximale</label>
-                {{ form.capacity|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" }}
-                {% for error in form.capacity.errors %}
-                    <p class="text-red-500 text-sm mt-1">{{ error }}</p>
-                {% endfor %}
-            </div>
+                        <label class="flex items-center">
+                            {{ form.requires_approval|add_class:"form-checkbox" }}
+                            <span class="ml-2 form-label">
+                                {{ form.requires_approval.label }}
+                            </span>
+                        </label>
 
-            <!-- Options de publication -->
-            <div class="flex flex-col gap-3">
-                <label class="flex items-center">
-                    {{ form.is_published|add_class:"h-4 w-4 text-orange-primary focus:ring-orange-primary border-gray-300 rounded" }}
-                    <span class="ml-2 text-gray-700 dark:text-gray-300">{{ form.is_published.label }}</span>
-                </label>
-
-                <label class="flex items-center">
-                    {{ form.requires_approval|add_class:"h-4 w-4 text-orange-primary focus:ring-orange-primary border-gray-300 rounded" }}
-                    <span class="ml-2 text-gray-700 dark:text-gray-300">{{ form.requires_approval.label }}</span>
-                </label>
-
-                <label class="flex items-center">
-                    {{ form.generate_qr|add_class:"h-4 w-4 text-orange-primary focus:ring-orange-primary border-gray-300 rounded" }}
-                    <span class="ml-2 text-gray-700 dark:text-gray-300">Générer un QR Code pour cet événement</span>
-                </label>
+                        <label class="flex items-center">
+                            {{ form.generate_qr|add_class:"form-checkbox" }}
+                            <span class="ml-2 form-label">
+                                Générer un QR Code pour cet événement
+                            </span>
+                        </label>
+                    </div>
+                </div>
             </div>
 
             <!-- Tags -->
-            <div class="md:col-span-2">
-                <label class="block text-gray-700 dark:text-gray-300 mb-2">Tags (Public cible)</label>
-                {{ form.tags|add_class:"w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-primary focus:border-transparent dark:bg-dark-border dark:border-gray-700 dark:text-white" }}
-                <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Séparer les tags par des virgules</p>
+            <div>
+                <label class="form-label">
+                    Tags (Public cible) <span class="text-red-500">*</span>
+                </label>
+                <div class="flex flex-wrap">
+                    {% for tag in form.tags %}
+                        <label class="tag-selector">
+                            {{ tag.tag }}
+                            <span class="ml-2">{{ tag.choice_label }}</span>
+                        </label>
+                    {% endfor %}
+                </div>
                 {% for error in form.tags.errors %}
-                    <p class="text-red-500 text-sm mt-1">{{ error }}</p>
+                    <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
                 {% endfor %}
+            </div>
+
+            <!-- Contact et suivi -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <label class="form-label">
+                        Contact principal
+                    </label>
+                    {{ form.contact_person|add_class:"form-field"|attr:"placeholder:Nom et prénom" }}
+                </div>
+                <div>
+                    <label class="form-label">
+                        Email de contact
+                    </label>
+                    {{ form.contact_email|add_class:"form-field"|attr:"placeholder:contact@exemple.com" }}
+                </div>
+                <div>
+                    <label class="form-label">
+                        Numéro de suivi
+                    </label>
+                    {{ form.tracking_number|add_class:"form-field"|attr:"placeholder:Référence interne" }}
+                </div>
+                <div>
+                    <label class="form-label">
+                        Priorité
+                    </label>
+                    {{ form.priority|add_class:"form-field" }}
+                </div>
             </div>
         </div>
 
         <div class="mt-8 flex flex-col sm:flex-row justify-between gap-4">
-            <a href="{% url 'backoffice:event_list' %}" class="px-5 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium flex items-center justify-center hover:bg-gray-200 transition dark:bg-dark-border dark:text-gray-300 dark:hover:bg-gray-700">
+            <a href="{% url 'backoffice:event_list' %}" class="px-5 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium flex items-center justify-center hover:bg-gray-200 transition smooth-transition dark:bg-dark-border dark:text-gray-300 dark:hover:bg-gray-700">
                 <i class="fas fa-times mr-2"></i> Annuler
             </a>
-            <button type="submit" class="px-5 py-3 bg-orange-primary text-white rounded-lg font-medium flex items-center justify-center hover:bg-orange-dark transition">
+            <button id="submit-btn" type="submit" class="px-5 py-3 bg-orange-primary text-white rounded-lg font-medium flex items-center justify-center hover:bg-orange-dark transition smooth-transition">
                 <i class="fas fa-calendar-plus mr-2"></i> Créer l'événement
             </button>
         </div>
     </form>
 </div>
+
+<!-- Overlay de chargement -->
+<div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+    <div class="bg-white dark:bg-dark-card p-8 rounded-xl shadow-lg animate-fade-in">
+        <div class="flex flex-col items-center">
+            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-orange-primary mb-4"></div>
+            <h3 class="text-xl font-medium text-gray-700 dark:text-gray-300 mb-2">Création de l'événement en cours</h3>
+            <p class="text-gray-500 dark:text-gray-400">Veuillez patienter...</p>
+        </div>
+    </div>
+</div>
+
+<!-- Notification de succès -->
+<div id="success-notification" class="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg z-50 hidden animate-fade-in">
+    <div class="flex items-center">
+        <i class="fas fa-check-circle text-xl mr-3"></i>
+        <div>
+            <p class="font-medium">Événement créé avec succès !</p>
+            <p class="text-sm opacity-80">L'événement a été enregistré dans le système.</p>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Gestion de l'aperçu de l'image
-    document.getElementById('id_cover_image').addEventListener('change', function(e) {
-        const fileInput = this;
-        const fileName = fileInput.files.length ? fileInput.files[0].name : 'Aucune image sélectionnée';
-        document.getElementById('file-name').textContent = fileName;
+    document.addEventListener('DOMContentLoaded', () => {
+        // Gestion de l'aperçu de l'image
+        const coverImageInput = document.getElementById('id_cover_image');
+        if (coverImageInput) {
+            coverImageInput.addEventListener('change', function(e) {
+                const fileInput = this;
+                const fileName = fileInput.files.length ? fileInput.files[0].name : 'Aucune image sélectionnée';
+                document.getElementById('file-name').textContent = fileName;
 
-        // Afficher l'aperçu
-        if (fileInput.files && fileInput.files[0]) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const previewImg = document.getElementById('preview-img');
-                previewImg.src = e.target.result;
-                previewImg.classList.remove('hidden');
-                document.getElementById('image-preview').classList.remove('hidden');
+                // Afficher l'aperçu
+                if (fileInput.files && fileInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const previewImg = document.getElementById('preview-img');
+                        previewImg.src = e.target.result;
+                        previewImg.classList.remove('hidden');
+
+                        // Cacher le placeholder
+                        const previewPlaceholder = document.getElementById('image-preview-placeholder');
+                        if (previewPlaceholder) previewPlaceholder.classList.add('hidden');
+
+                        document.getElementById('image-preview').classList.add('flex', 'items-center', 'justify-center');
+                    }
+                    reader.readAsDataURL(fileInput.files[0]);
+                }
+            });
+        }
+
+        // Glisser-déposer pour l'image
+        const dropArea = document.getElementById('image-preview');
+
+        if (dropArea) {
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
             }
-            reader.readAsDataURL(fileInput.files[0]);
-        }
-    });
 
-    // Validation des dates
-    document.querySelector('form').addEventListener('submit', function(e) {
-        const startDate = new Date(document.querySelector('[name="start_date"]').value);
-        const endDate = new Date(document.querySelector('[name="end_date"]').value);
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, highlight, false);
+            });
 
-        if (startDate >= endDate) {
-            alert('La date de fin doit être postérieure à la date de début');
-            e.preventDefault();
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, unhighlight, false);
+            });
+
+            function highlight() {
+                dropArea.classList.add('border-orange-primary', 'bg-orange-50');
+            }
+
+            function unhighlight() {
+                dropArea.classList.remove('border-orange-primary', 'bg-orange-50');
+            }
+
+            dropArea.addEventListener('drop', handleDrop, false);
+
+            function handleDrop(e) {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                document.getElementById('id_cover_image').files = files;
+
+                // Déclencher l'événement change
+                const event = new Event('change');
+                document.getElementById('id_cover_image').dispatchEvent(event);
+            }
         }
+
+        // Animation de chargement lors de la soumission
+        const eventForm = document.getElementById('event-form');
+        if (eventForm) {
+            eventForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                // Validation des dates
+                const startDate = new Date(document.querySelector('[name="start_date"]').value);
+                const endDate = new Date(document.querySelector('[name="end_date"]').value);
+
+                if (startDate >= endDate) {
+                    alert('La date de fin doit être postérieure à la date de début');
+                    return false;
+                }
+
+                // Afficher l'overlay de chargement
+                document.getElementById('loading-overlay').classList.remove('hidden');
+
+                // Désactiver le bouton de soumission
+                const submitBtn = document.getElementById('submit-btn');
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i> Création en cours...';
+
+                // Animation de la barre de progression
+                const progressBar = document.querySelector('.progress-bar');
+                let width = 0;
+                const interval = setInterval(() => {
+                    if (width >= 100) {
+                        clearInterval(interval);
+
+                        // Soumission du formulaire après l'animation
+                        setTimeout(() => {
+                            // Soumettre le formulaire pour de vrai
+                            eventForm.submit();
+                        }, 500);
+                    } else {
+                        width += 5;
+                        progressBar.style.width = width + '%';
+                    }
+                }, 100);
+            });
+        }
+
+        // Gestion des tags sélectionnés
+        const tagCheckboxes = document.querySelectorAll('input[name="tags"]');
+        tagCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const tagSelector = this.closest('.tag-selector');
+                if (this.checked) {
+                    tagSelector.classList.add('selected');
+                } else {
+                    tagSelector.classList.remove('selected');
+                }
+            });
+
+            // Initialiser l'état des tags
+            if (checkbox.checked) {
+                checkbox.closest('.tag-selector').classList.add('selected');
+            }
+        });
     });
 </script>
 {% endblock %}

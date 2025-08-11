@@ -40,16 +40,18 @@
     body {
       font-family: 'Inter', sans-serif;
       overflow-x: hidden;
+      background-color: #f3f4f6;
     }
 
-    .dark .bg-gray-light {
-      background-color: #000000;
+    .dark body {
+      background-color: #0f172a;
     }
 
-    .dark .bg-white {
+    /* SUPPRIMER LES STYLES CONFLICTUELS */
+    /* .dark .bg-white {
       background-color: #141414;
       border: 1px solid #282828;
-    }
+    } */
 
     .dark .stat-card {
       background-color: #141414;
@@ -162,7 +164,7 @@
   {% block extra_css %}{% endblock %}
 </head>
 
-<body class="bg-gray-100 flex flex-col h-screen dark:bg-dark-bg md:flex-row">
+<body class="flex flex-col h-screen dark:bg-dark-bg md:flex-row">
   <!-- Mobile menu button -->
   <div class="md:hidden flex justify-between items-center p-4 bg-black-primary text-white">
     <button id="mobile-menu-button" class="text-orange-primary">
