@@ -1,155 +1,288 @@
 {% extends "backoffice/base.html" %}
 {% load static %}
 
-{% block title %}Nouvel événement | Orange Digital Center{% endblock %}
+{% block title %}{% if form.instance.pk %}Modifier{% else %}Nouvel{% endif %} événement | Orange Digital Center{% endblock %}
 
 {% block extra_css %}
 <style>
-    /* Styles d'animation */
+    /* Animations améliorées */
     @keyframes fadeIn {
         from { opacity: 0; transform: translateY(10px); }
         to { opacity: 1; transform: translateY(0); }
     }
 
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
+    @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-8px); }
+    }
+
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+
+    @keyframes gradientShift {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
     }
 
     .animate-fade-in {
-        animation: fadeIn 0.3s ease-out forwards;
+        animation: fadeIn 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
     }
 
-    .animate-spin {
-        animation: spin 1s linear infinite;
+    .animate-bounce {
+        animation: bounce 0.6s ease;
+    }
+
+    .animate-pulse {
+        animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
 
     .smooth-transition {
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
     }
 
     .progress-bar {
-        height: 4px;
-        background-color: #FF7900;
+        height: 5px;
+        background: linear-gradient(90deg, #FF7900, #FFA93C, #FF7900);
+        background-size: 200% 200%;
         width: 0%;
-        transition: width 0.4s ease;
+        animation: gradientShift 3s ease infinite;
     }
 
-    /* Aperçu d'image */
-    .image-preview-placeholder {
+    /* Aperçu d'image amélioré */
+    .image-preview-container {
         border: 2px dashed #d1d5db;
-        border-radius: 0.5rem;
-        padding: 1.5rem;
+        border-radius: 16px;
+        transition: all 0.3s ease;
+        overflow: hidden;
+        min-height: 200px;
+        background: linear-gradient(135deg, #f9fafb 25%, #f0f4ff 50%, #f9fafb 75%);
+        background-size: 400% 400%;
+    }
+
+    .image-preview-container.dragover {
+        background: #fff8f0;
+        border-color: #FF7900;
+        animation: gradientShift 2s ease infinite;
+    }
+
+    .image-preview-placeholder {
+        padding: 2rem;
         text-align: center;
-        background-color: #f9fafb;
     }
 
-    .dark .image-preview-placeholder {
-        border-color: #4b5563;
-        background-color: #1f2937;
-    }
-
-    /* Tags */
+    /* Tags améliorés */
     .tag-selector {
         display: inline-flex;
         align-items: center;
-        padding: 0.25rem 0.75rem;
+        padding: 0.5rem 1.25rem;
         border-radius: 9999px;
-        font-size: 0.75rem;
-        font-weight: 500;
+        font-size: 0.875rem;
+        font-weight: 600;
         cursor: pointer;
-        transition: all 0.2s ease;
-        margin-right: 0.5rem;
-        margin-bottom: 0.5rem;
+        transition: all 0.3s ease;
+        margin-right: 0.75rem;
+        margin-bottom: 0.75rem;
         background-color: #f3f4f6;
-        border: 1px solid #e5e7eb;
-    }
-
-    .dark .tag-selector {
-        background-color: #1f2937;
-        border: 1px solid #374151;
+        border: 2px solid #e5e7eb;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     }
 
     .tag-selector:hover {
-        background-color: rgba(255, 121, 0, 0.2);
-    }
-
-    .tag-selector input[type="checkbox"] {
-        margin-right: 0.5rem;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.08);
     }
 
     .tag-selector.selected {
-        background-color: rgba(255, 121, 0, 0.3);
-        border: 1px solid #FF7900;
+        background-color: rgba(255, 121, 0, 0.15);
+        border-color: #FF7900;
+        color: #c2410c;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(255, 121, 0, 0.15);
     }
 
-    /* STYLES SPÉCIFIQUES POUR LES CHAMPS */
+    /* Champs améliorés */
     .form-field {
         display: block;
         width: 100%;
-        padding: 0.75rem;
+        padding: 1rem;
         background-color: #fff;
-        border: 1px solid #d1d5db;
-        border-radius: 0.5rem;
+        border: 2px solid #d1d5db;
+        border-radius: 12px;
         color: #111827;
-        font-size: 0.875rem;
-        line-height: 1.25rem;
-    }
-
-    .dark .form-field {
-        background-color: #1e293b;
-        border-color: #334155;
-        color: #f1f5f9;
+        font-size: 1rem;
+        line-height: 1.5;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
     }
 
     .form-field:focus {
         outline: none;
         border-color: #FF7900;
-        box-shadow: 0 0 0 3px rgba(255, 121, 0, 0.2);
-    }
-
-    .form-field::placeholder {
-        color: #9ca3af;
-    }
-
-    .dark .form-field::placeholder {
-        color: #64748b;
+        box-shadow: 0 0 0 4px rgba(255, 121, 0, 0.25);
+        transform: translateY(-2px);
     }
 
     .form-label {
         display: block;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.75rem;
         color: #374151;
-        font-weight: 500;
-        font-size: 0.875rem;
+        font-weight: 600;
+        font-size: 1rem;
+        position: relative;
+        padding-left: 1.5rem;
     }
 
-    .dark .form-label {
-        color: #cbd5e1;
+    .form-label:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, #FF7900, #FFA93C);
     }
 
-    .form-checkbox {
-        width: 1rem;
-        height: 1rem;
-        border: 1px solid #d1d5db;
-        border-radius: 0.25rem;
-        background-color: white;
-        accent-color: #FF7900;
+    /* Boutons améliorés */
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem 2rem;
+        border-radius: 14px;
+        font-weight: 600;
+        font-size: 1rem;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border: none;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
     }
 
-    .dark .form-checkbox {
-        border: 1px solid #475569;
+    .btn:after {
+        content: "";
+        position: absolute;
+        top: -50%;
+        left: -60%;
+        width: 20%;
+        height: 200%;
+        background: rgba(255,255,255,0.2);
+        transform: rotate(25deg);
+        transition: all 0.7s ease;
+    }
+
+    .btn:hover:after {
+        left: 140%;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #FF7900, #FFA93C);
+        color: white;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-4px) scale(1.02);
+        box-shadow: 0 8px 20px rgba(255, 121, 0, 0.3);
+    }
+
+    .btn-secondary {
+        background: #f8fafc;
+        color: #4b5563;
+        border: 1px solid #e2e8f0;
+    }
+
+    .btn-secondary:hover {
+        background: #f1f5f9;
+        transform: translateY(-4px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    /* Overlay amélioré */
+    .loading-overlay {
+        background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(8px);
+    }
+
+    .loading-spinner {
+        border-top-color: #FF7900;
+        border-left-color: #FF7900;
+        border-bottom-color: #FFA93C;
+        border-right-color: #FFA93C;
+        animation: spin 1s linear infinite;
+    }
+
+    /* Effet de vague sur le titre */
+    .wave-text {
+        display: inline-block;
+        position: relative;
+    }
+
+    .wave-text span {
+        position: relative;
+        display: inline-block;
+        animation: wave-animation 1.8s ease-in-out infinite;
+        animation-delay: calc(.1s * var(--i));
+    }
+
+    @keyframes wave-animation {
+        0%,40%,100% { transform: translateY(0); }
+        20% { transform: translateY(-12px); }
+    }
+
+    /* Mode sombre */
+    .dark .form-field {
         background-color: #1e293b;
+        border-color: #334155;
+        color: #f1f5f9;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+
+    .dark .form-field:focus {
+        box-shadow: 0 0 0 4px rgba(255, 121, 0, 0.4);
+    }
+
+    .dark .image-preview-container {
+        background: linear-gradient(135deg, #1f2937 25%, #1e3a5f 50%, #1f2937 75%);
+        border-color: #475569;
+    }
+
+    .dark .tag-selector {
+        background-color: #1f2937;
+        border-color: #374151;
+    }
+
+    .dark .tag-selector.selected {
+        background-color: rgba(255, 121, 0, 0.2);
+        color: #fdba74;
+    }
+
+    .dark .btn-secondary {
+        background: #1e293b;
+        color: #cbd5e1;
+        border-color: #334155;
     }
 </style>
 {% endblock %}
 
 {% block content %}
-<div class="bg-white dark:bg-dark-card rounded-xl shadow-card p-6 mb-8 max-w-4xl mx-auto">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-2xl font-bold text-black-primary dark:text-white">Créer un nouvel événement</h2>
-        <div class="flex items-center text-sm text-gray-500 dark:text-gray-400">
-            <i class="far fa-save mr-1"></i>
+<div class="bg-white dark:bg-dark-card rounded-2xl shadow-xl p-8 mb-8 max-w-4xl mx-auto animate-fade-in">
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-bold text-black-primary dark:text-white">
+            <span class="wave-text">
+                {% for char in "Créer un nouvel événement" %}
+                <span style="--i: {{ forloop.counter }}">{{ char }}</span>
+                {% endfor %}
+            </span>
+        </h2>
+        <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 bg-orange-50 dark:bg-orange-900/20 px-4 py-2 rounded-full">
+            <i class="fas fa-sync-alt animate-spin mr-2 text-orange-500"></i>
             <span>Enregistrement automatique activé</span>
         </div>
     </div>
@@ -157,15 +290,15 @@
     <form id="event-form" method="post" enctype="multipart/form-data">
         {% csrf_token %}
 
-        <!-- Barre de progression -->
-        <div class="progress-bar mb-4"></div>
+        <!-- Barre de progression améliorée -->
+        <div class="progress-bar mb-6 rounded-full"></div>
 
-        <div class="space-y-6">
+        <div class="space-y-8">
             <!-- Titre et Image -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                     <label class="form-label">
-                        Titre de l'événement <span class="text-red-500">*</span>
+                        Titre de l'événement
                     </label>
                     <input type="text"
                            name="title"
@@ -175,28 +308,30 @@
                            value="{{ form.title.value|default:'' }}"
                            required>
                     {% for error in form.title.errors %}
-                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
+                        <p class="mt-2 text-sm text-red-600 dark:text-red-400 animate-fade-in">{{ error }}</p>
                     {% endfor %}
                 </div>
 
                 <div>
                     <label class="form-label">
-                        Image de couverture <span class="text-red-500">*</span>
+                        Image de couverture
                     </label>
                     <div class="flex flex-col items-start">
-                        <!-- Aperçu de l'image -->
-                        <div id="image-preview" class="image-preview mb-3 w-full flex items-center justify-center overflow-hidden rounded-lg border border-dashed border-gray-300 dark:border-gray-700">
+                        <!-- Aperçu amélioré -->
+                        <div id="image-preview" class="image-preview-container flex items-center justify-center mb-4">
                             <div id="image-preview-placeholder" class="image-preview-placeholder text-center w-full">
-                                <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
-                                <p class="text-gray-500 dark:text-gray-400">Glissez une image ici ou cliquez pour télécharger</p>
-                                <p class="text-sm text-gray-400 mt-1">Dimensions recommandées : 1200x630px</p>
+                                <i class="fas fa-cloud-upload-alt text-4xl text-gray-400 mb-3"></i>
+                                <p class="text-gray-500 dark:text-gray-400 font-medium">Glissez-déposez votre image</p>
+                                <p class="text-sm text-gray-400 mt-2">Formats: JPG, PNG, SVG | Taille max: 5MB</p>
                             </div>
-                            <img id="preview-img" src="{% if form.cover_image.value %}{{ form.cover_image.value.url }}{% endif %}" alt="Aperçu de l'image" class="{% if not form.cover_image.value %}hidden{% endif %} max-w-full max-h-64">
+                            <img id="preview-img" src="{% if form.cover_image.value %}{{ form.cover_image.value.url }}{% endif %}"
+                                 alt="Aperçu"
+                                 class="w-full h-auto max-h-72 object-cover hidden">
                         </div>
 
-                        <!-- Bouton de téléchargement -->
-                        <label for="id_cover_image" class="cursor-pointer bg-orange-100 text-orange-primary px-4 py-2 rounded-lg font-medium hover:bg-orange-200 transition smooth-transition dark:bg-orange-900/30 dark:hover:bg-orange-800/50">
-                            <i class="fas fa-upload mr-2"></i>Choisir une image
+                        <!-- Bouton amélioré -->
+                        <label for="id_cover_image" class="btn btn-primary cursor-pointer">
+                            <i class="fas fa-upload mr-3"></i>Choisir une image
                         </label>
                         <input type="file"
                                name="cover_image"
@@ -204,76 +339,66 @@
                                class="hidden"
                                accept="image/*"
                                required>
-                        <span id="file-name" class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        <span id="file-name" class="text-sm text-gray-500 dark:text-gray-400 mt-2 block">
                             {% if form.cover_image.value %}
                                 {{ form.cover_image.value.name }}
                             {% else %}
-                                Aucune image sélectionnée
+                                Aucun fichier sélectionné
                             {% endif %}
                         </span>
                     </div>
-                    {% for error in form.cover_image.errors %}
-                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
-                    {% endfor %}
                 </div>
             </div>
 
             <!-- Description -->
             <div>
                 <label class="form-label">
-                    Description <span class="text-red-500">*</span>
+                    Description
                 </label>
                 <textarea name="description"
                           id="id_description"
                           class="form-field"
-                          placeholder="Décrivez l'événement en détail..."
-                          rows="4"
+                          placeholder="Décrivez en détail le contenu de l'événement, les prérequis, et les compétences acquises..."
+                          rows="5"
                           required>{{ form.description.value|default:'' }}</textarea>
-                {% for error in form.description.errors %}
-                    <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
-                {% endfor %}
             </div>
 
             <!-- Type et Lieu -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                     <label class="form-label">
-                        Type d'événement <span class="text-red-500">*</span>
+                        Type d'événement
                     </label>
                     <select name="type" id="id_type" class="form-field" required>
+                        <option value="">Sélectionnez un type</option>
                         {% for value, label in form.type.field.choices %}
                             <option value="{{ value }}" {% if form.type.value == value %}selected{% endif %}>
                                 {{ label }}
                             </option>
                         {% endfor %}
                     </select>
-                    {% for error in form.type.errors %}
-                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
-                    {% endfor %}
                 </div>
 
                 <div>
                     <label class="form-label">
-                        Lieu <span class="text-red-500">*</span>
+                        Lieu
                     </label>
                     <select name="location" id="id_location" class="form-field" required>
+                        <option value="">Sélectionnez un lieu</option>
                         {% for value, label in form.location.field.choices %}
                             <option value="{{ value }}" {% if form.location.value == value %}selected{% endif %}>
                                 {{ label }}
                             </option>
                         {% endfor %}
                     </select>
-                    {% for error in form.location.errors %}
-                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
-                    {% endfor %}
                 </div>
             </div>
 
             <!-- Dates -->
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 <div>
                     <label class="form-label">
-                        Date et heure de début <span class="text-red-500">*</span>
+                        Date et heure de début
                     </label>
                     <input type="datetime-local"
                            name="start_date"
@@ -281,14 +406,11 @@
                            class="form-field"
                            value="{{ form.start_date.value|date:'Y-m-d\TH:i'|default:'' }}"
                            required>
-                    {% for error in form.start_date.errors %}
-                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
-                    {% endfor %}
                 </div>
 
                 <div>
                     <label class="form-label">
-                        Date et heure de fin <span class="text-red-500">*</span>
+                        Date et heure de fin
                     </label>
                     <input type="datetime-local"
                            name="end_date"
@@ -296,14 +418,11 @@
                            class="form-field"
                            value="{{ form.end_date.value|date:'Y-m-d\TH:i'|default:'' }}"
                            required>
-                    {% for error in form.end_date.errors %}
-                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
-                    {% endfor %}
                 </div>
 
                 <div>
                     <label class="form-label">
-                        Date limite d'inscription <span class="text-red-500">*</span>
+                        Date limite d'inscription
                     </label>
                     <input type="datetime-local"
                            name="registration_deadline"
@@ -311,40 +430,40 @@
                            class="form-field"
                            value="{{ form.registration_deadline.value|date:'Y-m-d\TH:i'|default:'' }}"
                            required>
-                    {% for error in form.registration_deadline.errors %}
-                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
-                    {% endfor %}
                 </div>
             </div>
 
             <!-- Capacité et Options -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                     <label class="form-label">
-                        Capacité maximale <span class="text-red-500">*</span>
+                        Capacité maximale
                     </label>
-                    <input type="number"
-                           name="capacity"
-                           id="id_capacity"
-                           class="form-field"
-                           min="1"
-                           value="{{ form.capacity.value|default:'50' }}"
-                           required>
-                    {% for error in form.capacity.errors %}
-                        <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
-                    {% endfor %}
+                    <div class="relative">
+                        <input type="number"
+                               name="capacity"
+                               id="id_capacity"
+                               class="form-field pl-14"
+                               min="1"
+                               value="{{ form.capacity.value|default:'50' }}"
+                               required>
+                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                            <i class="fas fa-users"></i>
+                        </span>
+                    </div>
                 </div>
 
-                <div class="flex flex-col justify-center">
-                    <div class="flex flex-col gap-3">
+                <div class="bg-orange-50 dark:bg-orange-900/20 p-6 rounded-2xl">
+                    <h3 class="font-bold text-lg text-gray-800 dark:text-gray-200 mb-4">Options de publication</h3>
+                    <div class="space-y-4">
                         <label class="flex items-center">
                             <input type="checkbox"
                                    name="is_published"
                                    id="id_is_published"
-                                   class="form-checkbox"
+                                   class="form-checkbox h-5 w-5"
                                    {% if form.is_published.value %}checked{% endif %}>
-                            <span class="ml-2 form-label">
-                                {{ form.is_published.label }}
+                            <span class="ml-3 form-label">
+                                Publier immédiatement
                             </span>
                         </label>
 
@@ -352,10 +471,10 @@
                             <input type="checkbox"
                                    name="requires_approval"
                                    id="id_requires_approval"
-                                   class="form-checkbox"
+                                   class="form-checkbox h-5 w-5"
                                    {% if form.requires_approval.value %}checked{% endif %}>
-                            <span class="ml-2 form-label">
-                                {{ form.requires_approval.label }}
+                            <span class="ml-3 form-label">
+                                Validation manuelle requise
                             </span>
                         </label>
 
@@ -363,21 +482,24 @@
                             <input type="checkbox"
                                    name="generate_qr"
                                    id="id_generate_qr"
-                                   class="form-checkbox"
+                                   class="form-checkbox h-5 w-5"
                                    {% if form.generate_qr.value %}checked{% endif %}>
-                            <span class="ml-2 form-label">
-                                Générer un QR Code pour cet événement
+                            <span class="ml-3 form-label">
+                                Générer un QR Code d'accès
                             </span>
                         </label>
                     </div>
                 </div>
             </div>
 
-            <!-- Tags -->
-            <div>
+            <!-- Tags améliorés -->
+            <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl">
                 <label class="form-label">
-                    Tags (Public cible) <span class="text-red-500">*</span>
+                    Public cible (Tags)
                 </label>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">
+                    Sélectionnez les publics cibles pour cet événement
+                </p>
                 <div class="flex flex-wrap">
                     {% for value, label in form.tags.field.choices %}
                         <label class="tag-selector {% if value in form.tags.value or value|stringformat:'s' in form.tags.value %}selected{% endif %}">
@@ -389,90 +511,104 @@
                         </label>
                     {% endfor %}
                 </div>
-                {% for error in form.tags.errors %}
-                    <p class="mt-1 text-sm text-red-600 dark:text-red-500">{{ error }}</p>
-                {% endfor %}
             </div>
 
             <!-- Contact et suivi -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                     <label class="form-label">
                         Contact principal
                     </label>
-                    <input type="text"
-                           name="contact_person"
-                           id="id_contact_person"
-                           class="form-field"
-                           placeholder="Nom et prénom"
-                           value="{{ form.contact_person.value|default:'' }}">
+                    <div class="relative">
+                        <input type="text"
+                               name="contact_person"
+                               id="id_contact_person"
+                               class="form-field pl-14"
+                               placeholder="Nom et prénom"
+                               value="{{ form.contact_person.value|default:'' }}">
+                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                            <i class="fas fa-user"></i>
+                        </span>
+                    </div>
                 </div>
                 <div>
                     <label class="form-label">
                         Email de contact
                     </label>
-                    <input type="email"
-                           name="contact_email"
-                           id="id_contact_email"
-                           class="form-field"
-                           placeholder="contact@exemple.com"
-                           value="{{ form.contact_email.value|default:'' }}">
+                    <div class="relative">
+                        <input type="email"
+                               name="contact_email"
+                               id="id_contact_email"
+                               class="form-field pl-14"
+                               placeholder="contact@exemple.com"
+                               value="{{ form.contact_email.value|default:'' }}">
+                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                            <i class="fas fa-envelope"></i>
+                        </span>
+                    </div>
                 </div>
                 <div>
                     <label class="form-label">
                         Numéro de suivi
                     </label>
-                    <input type="text"
-                           name="tracking_number"
-                           id="id_tracking_number"
-                           class="form-field"
-                           placeholder="Référence interne"
-                           value="{{ form.tracking_number.value|default:'' }}">
+                    <div class="relative">
+                        <input type="text"
+                               name="tracking_number"
+                               id="id_tracking_number"
+                               class="form-field pl-14"
+                               placeholder="Référence interne"
+                               value="{{ form.tracking_number.value|default:'' }}">
+                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                            <i class="fas fa-hashtag"></i>
+                        </span>
+                    </div>
                 </div>
                 <div>
                     <label class="form-label">
                         Priorité
                     </label>
-                    <select name="priority" id="id_priority" class="form-field">
-                        {% for value, label in form.priority.field.choices %}
-                            <option value="{{ value }}" {% if form.priority.value == value %}selected{% endif %}>
-                                {{ label }}
-                            </option>
-                        {% endfor %}
-                    </select>
+                    <div class="relative">
+                        <select name="priority" id="id_priority" class="form-field pl-14">
+                            {% for value, label in form.priority.field.choices %}
+                                <option value="{{ value }}" {% if form.priority.value == value %}selected{% endif %}>
+                                    {{ label }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                        <span class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                            <i class="fas fa-flag"></i>
+                        </span>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <div class="mt-8 flex flex-col sm:flex-row justify-between gap-4">
-            <a href="{% url 'backoffice:event_list' %}" class="px-5 py-3 bg-gray-100 text-gray-700 rounded-lg font-medium flex items-center justify-center hover:bg-gray-200 transition smooth-transition dark:bg-dark-border dark:text-gray-300 dark:hover:bg-gray-700">
-                <i class="fas fa-times mr-2"></i> Annuler
+        <div class="mt-10 flex flex-col sm:flex-row justify-between gap-6">
+            <a href="{% url 'backoffice:event_list' %}" class="btn btn-secondary flex-1">
+                <i class="fas fa-times mr-3"></i> Annuler
             </a>
-            <button id="submit-btn" type="submit" class="px-5 py-3 bg-orange-primary text-white rounded-lg font-medium flex items-center justify-center hover:bg-orange-dark transition smooth-transition">
-                <i class="fas fa-calendar-plus mr-2"></i> Créer l'événement
+            <button id="submit-btn" type="submit" class="btn btn-primary flex-1 animate-pulse">
+                <i class="fas fa-calendar-plus mr-3"></i>
+                Créer l'événement
             </button>
         </div>
     </form>
 </div>
 
-<!-- Overlay de chargement -->
-<div id="loading-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
-    <div class="bg-white dark:bg-dark-card p-8 rounded-xl shadow-lg animate-fade-in">
+<!-- Overlay de chargement amélioré -->
+<div id="loading-overlay" class="fixed inset-0 z-50 hidden flex items-center justify-center loading-overlay">
+    <div class="bg-white dark:bg-dark-card p-10 rounded-2xl shadow-2xl animate-fade-in">
         <div class="flex flex-col items-center">
-            <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-orange-primary mb-4"></div>
-            <h3 class="text-xl font-medium text-gray-700 dark:text-gray-300 mb-2">Création de l'événement en cours</h3>
-            <p class="text-gray-500 dark:text-gray-400">Veuillez patienter...</p>
-        </div>
-    </div>
-</div>
-
-<!-- Notification de succès -->
-<div id="success-notification" class="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-lg shadow-lg z-50 hidden animate-fade-in">
-    <div class="flex items-center">
-        <i class="fas fa-check-circle text-xl mr-3"></i>
-        <div>
-            <p class="font-medium">Événement créé avec succès !</p>
-            <p class="text-sm opacity-80">L'événement a été enregistré dans le système.</p>
+            <div class="loading-spinner rounded-full h-20 w-20 border-4 mb-6"></div>
+            <h3 class="text-2xl font-bold text-gray-800 dark:text-white mb-2">
+                Création en cours
+            </h3>
+            <p class="text-gray-600 dark:text-gray-300 text-lg">
+                Veuillez patienter pendant le traitement...
+            </p>
+            <div class="mt-6 w-full max-w-xs bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+                <div class="progress-bar h-2.5 rounded-full"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -481,133 +617,138 @@
 {% block extra_js %}
 <script>
     document.addEventListener('DOMContentLoaded', () => {
-        // Gestion de l'aperçu de l'image
+        // Initialisation
+        const progressBar = document.querySelector('.progress-bar');
+        progressBar.style.width = '0%';
+
+        // Affichage de l'image existante
+        {% if form.instance.pk and form.instance.cover_image %}
+            const previewImg = document.getElementById('preview-img');
+            if (previewImg) {
+                previewImg.classList.remove('hidden');
+                document.getElementById('image-preview-placeholder').classList.add('hidden');
+                document.getElementById('file-name').textContent = "{{ form.instance.cover_image.name }}";
+            }
+        {% endif %}
+
+        // Gestion de l'aperçu d'image
         const coverImageInput = document.getElementById('id_cover_image');
+        const imagePreview = document.getElementById('image-preview');
+
         if (coverImageInput) {
             coverImageInput.addEventListener('change', function(e) {
-                const fileInput = this;
-                const fileName = fileInput.files.length ? fileInput.files[0].name : 'Aucune image sélectionnée';
+                const file = this.files[0];
+                const fileName = file ? file.name : 'Aucun fichier sélectionné';
                 document.getElementById('file-name').textContent = fileName;
 
-                // Afficher l'aperçu
-                if (fileInput.files && fileInput.files[0]) {
+                if (file && file.type.match('image.*')) {
                     const reader = new FileReader();
+
                     reader.onload = function(e) {
                         const previewImg = document.getElementById('preview-img');
                         previewImg.src = e.target.result;
                         previewImg.classList.remove('hidden');
+                        previewImg.classList.add('animate-fade-in');
 
-                        // Cacher le placeholder
-                        const previewPlaceholder = document.getElementById('image-preview-placeholder');
-                        if (previewPlaceholder) previewPlaceholder.classList.add('hidden');
-
-                        document.getElementById('image-preview').classList.add('flex', 'items-center', 'justify-center');
+                        document.getElementById('image-preview-placeholder').classList.add('hidden');
+                        imagePreview.classList.add('flex', 'items-center', 'justify-center');
                     }
-                    reader.readAsDataURL(fileInput.files[0]);
+
+                    reader.readAsDataURL(file);
                 }
             });
         }
 
-        // Glisser-déposer pour l'image
-        const dropArea = document.getElementById('image-preview');
-
-        if (dropArea) {
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, preventDefaults, false);
+        // Glisser-déposer amélioré
+        if (imagePreview) {
+            ['dragenter', 'dragover'].forEach(event => {
+                imagePreview.addEventListener(event, () => {
+                    imagePreview.classList.add('dragover');
+                });
             });
 
-            function preventDefaults(e) {
+            ['dragleave', 'drop'].forEach(event => {
+                imagePreview.addEventListener(event, () => {
+                    imagePreview.classList.remove('dragover');
+                });
+            });
+
+            imagePreview.addEventListener('drop', e => {
                 e.preventDefault();
-                e.stopPropagation();
-            }
-
-            ['dragenter', 'dragover'].forEach(eventName => {
-                dropArea.addEventListener(eventName, highlight, false);
+                const files = e.dataTransfer.files;
+                if (files.length) {
+                    coverImageInput.files = files;
+                    coverImageInput.dispatchEvent(new Event('change'));
+                }
             });
-
-            ['dragleave', 'drop'].forEach(eventName => {
-                dropArea.addEventListener(eventName, unhighlight, false);
-            });
-
-            function highlight() {
-                dropArea.classList.add('border-orange-primary', 'bg-orange-50');
-            }
-
-            function unhighlight() {
-                dropArea.classList.remove('border-orange-primary', 'bg-orange-50');
-            }
-
-            dropArea.addEventListener('drop', handleDrop, false);
-
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                document.getElementById('id_cover_image').files = files;
-
-                // Déclencher l'événement change
-                const event = new Event('change');
-                document.getElementById('id_cover_image').dispatchEvent(event);
-            }
         }
 
-        // Animation de chargement lors de la soumission
+        // Animation des tags
+        const tagCheckboxes = document.querySelectorAll('input[name="tags"]');
+        tagCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const tag = this.closest('.tag-selector');
+                if (this.checked) {
+                    tag.classList.add('selected', 'animate-bounce');
+                    setTimeout(() => tag.classList.remove('animate-bounce'), 600);
+                } else {
+                    tag.classList.remove('selected');
+                }
+            });
+        });
+
+        // Validation des dates
+        const validateDates = () => {
+            const startDate = new Date(document.getElementById('id_start_date').value);
+            const endDate = new Date(document.getElementById('id_end_date').value);
+            const regDeadline = new Date(document.getElementById('id_registration_deadline').value);
+
+            if (startDate >= endDate) {
+                alert('La date de fin doit être postérieure à la date de début');
+                return false;
+            }
+
+            if (regDeadline > startDate) {
+                alert('La date limite d\'inscription doit être antérieure à la date de début');
+                return false;
+            }
+
+            return true;
+        };
+
+        // Soumission du formulaire
         const eventForm = document.getElementById('event-form');
         if (eventForm) {
             eventForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-
-                // Validation des dates
-                const startDate = new Date(document.getElementById('id_start_date').value);
-                const endDate = new Date(document.getElementById('id_end_date').value);
-
-                if (startDate >= endDate) {
-                    alert('La date de fin doit être postérieure à la date de début');
+                if (!validateDates()) {
+                    e.preventDefault();
                     return false;
                 }
 
-                // Afficher l'overlay de chargement
-                document.getElementById('loading-overlay').classList.remove('hidden');
-
-                // Désactiver le bouton de soumission
-                const submitBtn = document.getElementById('submit-btn');
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="fas fa-spinner animate-spin mr-2"></i> Création en cours...';
+                // Affichage de l'animation
+                const loadingOverlay = document.getElementById('loading-overlay');
+                loadingOverlay.classList.remove('hidden');
 
                 // Animation de la barre de progression
-                const progressBar = document.querySelector('.progress-bar');
                 let width = 0;
                 const interval = setInterval(() => {
                     if (width >= 100) {
                         clearInterval(interval);
-
-                        // Soumission du formulaire après l'animation
-                        setTimeout(() => {
-                            // Soumettre le formulaire pour de vrai
-                            eventForm.submit();
-                        }, 500);
+                        eventForm.submit();
                     } else {
-                        width += 5;
+                        width += 2;
                         progressBar.style.width = width + '%';
                     }
-                }, 100);
+                }, 50);
             });
         }
 
-        // Gestion des tags sélectionnés
-        const tagCheckboxes = document.querySelectorAll('input[name="tags"]');
-        tagCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                const tagSelector = this.closest('.tag-selector');
-                if (this.checked) {
-                    tagSelector.classList.add('selected');
-                } else {
-                    tagSelector.classList.remove('selected');
-                }
-            });
-
-            // Initialiser l'état des tags
-            if (checkbox.checked) {
-                checkbox.closest('.tag-selector').classList.add('selected');
+        // Réinitialisation après chargement
+        window.addEventListener('pageshow', () => {
+            document.getElementById('loading-overlay').classList.add('hidden');
+            const submitBtn = document.getElementById('submit-btn');
+            if (submitBtn) {
+                submitBtn.disabled = false;
             }
         });
     });
