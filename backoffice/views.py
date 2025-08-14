@@ -215,7 +215,6 @@ def event_create(request):
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
         if form.is_valid():
-            # La validation des dates est déjà faite dans le formulaire
             event = form.save(commit=False)
             event.organizer = request.user
 
@@ -238,7 +237,7 @@ def event_create(request):
             'capacity': 50,
             'is_published': True,
             'generate_qr': True,
-            'priority': 'medium'
+            'priority': 'MEDIUM'
         })
 
     return render(request, 'backoffice/events/create.html', {'form': form})

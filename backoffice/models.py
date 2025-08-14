@@ -136,6 +136,11 @@ class Event(models.Model):
         ('COMPLETED', 'Terminé'),
         ('CANCELED', 'Annulé'),
     ]
+    PRIORITY_CHOICES = [
+        ('LOW', 'Basse'),
+        ('MEDIUM', 'Moyenne'),
+        ('HIGH', 'Haute'),
+    ]
 
     # Informations de base
     title = models.CharField(max_length=200, verbose_name="Titre")
@@ -186,6 +191,30 @@ class Event(models.Model):
         blank=True,
         verbose_name="Organisateur"
     )
+    contact_person = models.CharField(
+        max_length=100,
+        blank=True,
+        null=True,
+        verbose_name="Contact principal"
+    )
+    contact_email = models.EmailField(
+        blank=True,
+        null=True,
+        verbose_name="Email de contact"
+    )
+    tracking_number = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        verbose_name="Numéro de suivi"
+    )
+    priority = models.CharField(
+        max_length=10,
+        choices=PRIORITY_CHOICES,
+        default='MEDIUM',
+        verbose_name="Priorité"
+    )
+
     tags = TaggableManager(blank=True, verbose_name="Tags")
 
     # Suivi

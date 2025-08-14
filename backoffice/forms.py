@@ -10,13 +10,23 @@ class EventForm(forms.ModelForm):
         label=_("Générer un QR Code pour cet événement")
     )
 
+    # Ajoutez ces champs manquants
+    contact_person = forms.CharField(required=False, max_length=100)
+    contact_email = forms.EmailField(required=False)
+    tracking_number = forms.CharField(required=False, max_length=50)
+    priority = forms.ChoiceField(
+        choices=Event.PRIORITY_CHOICES,
+        initial='MEDIUM',
+        required=False
+    )
+
     class Meta:
         model = Event
         fields = [
             'title', 'description', 'type', 'location', 'cover_image',
             'start_date', 'end_date', 'registration_deadline',  # AJOUTEZ CE CHAMP
-            'capacity', 'is_published', 'requires_approval',  # AJOUTEZ CES CHAMPS
-            'contact_person', 'contact_email', 'tracking_number', 'priority', 'tags',  # AJOUTEZ CES CHAMPS
+            'capacity', 'is_published', 'requires_approval',
+            'tags',  # AJOUTEZ CE CHAMP
             'generate_qr'
         ]
         widgets = {
@@ -30,7 +40,7 @@ class EventForm(forms.ModelForm):
         cleaned_data = super().clean()
         start_date = cleaned_data.get('start_date')
         end_date = cleaned_data.get('end_date')
-        registration_deadline = cleaned_data.get('registration_deadline')  # AJOUTEZ CE CHAMP
+        registration_deadline = cleaned_data.get('registration_deadline')
 
         # Validation des dates
         if start_date and end_date and start_date >= end_date:
