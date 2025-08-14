@@ -209,42 +209,27 @@ def event_list(request):
 
 @login_required
 def event_create(request):
-    """Création d'un nouvel événement"""
     if not admin_required(request.user):
         raise PermissionDenied
 
     if request.method == 'POST':
         form = EventForm(request.POST, request.FILES)
         if form.is_valid():
+            # La validation des dates est déjà faite dans le formulaire
             event = form.save(commit=False)
             event.organizer = request.user
-            event.status = 'UPCOMING'  # Statut par défaut
 
-            # Générer un slug unique
+            # Générer le slug
             event.slug = slugify(event.title)
             if Event.objects.filter(slug=event.slug).exists():
                 event.slug = f"{event.slug}-{uuid.uuid4().hex[:6]}"
 
-            # Validation des dates
-            start_date = form.cleaned_data['start_date']
-            end_date = form.cleaned_data['end_date']
-            registration_deadline = form.cleaned_data['registration_deadline']
-
-            if start_date >= end_date:
-                messages.error(request, "La date de fin doit être postérieure à la date de début.")
-                return render(request, 'backoffice/events/create.html', {'form': form})
-
-            if registration_deadline > start_date:
-                messages.error(request, "La date limite d'inscription doit être antérieure à la date de début.")
-                return render(request, 'backoffice/events/create.html', {'form': form})
-
             event.save()
             form.save_m2m()  # Pour les tags
 
-            # Génération du QR Code si demandé
+            # Génération du QR Code
             if form.cleaned_data.get('generate_qr'):
                 generate_qr_code(event, request)
-                messages.info(request, "QR Code généré avec succès !")
 
             messages.success(request, f"Événement '{event.title}' créé avec succès !")
             return redirect('backoffice:event_list')
