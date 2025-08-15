@@ -5,7 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3218b3e5-496f-4f32-9bbf-4939f9b39d73" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backoffice/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/models.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/backoffice/templates/backoffice/events/create.html" beforeDir="false" afterPath="$PROJECT_DIR$/backoffice/templates/backoffice/events/create.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

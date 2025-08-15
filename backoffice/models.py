@@ -141,6 +141,22 @@ class Event(models.Model):
         ('MEDIUM', 'Moyenne'),
         ('HIGH', 'Haute'),
     ]
+    # Choix pour le statut
+    STATUS_CHOICES = [
+        ('UPCOMING', 'À venir'),
+        ('ONGOING', 'En cours'),
+        ('COMPLETED', 'Terminé'),
+        ('CANCELED', 'Annulé'),
+    ]
+
+    # Choix pour les tags (publics cibles) - Conforme CDC
+    TAG_CHOICES = [
+        ('FEMME', 'Femme'),
+        ('ENTREPRENEUR', 'Entrepreneur'),
+        ('ETUDIANT', 'Étudiant'),
+        ('JEUNE', 'Jeune'),
+        ('STARTUP', 'Startup'),
+    ]
 
     # Informations de base
     title = models.CharField(max_length=200, verbose_name="Titre")
@@ -215,7 +231,35 @@ class Event(models.Model):
         verbose_name="Priorité"
     )
 
-    tags = TaggableManager(blank=True, verbose_name="Tags")
+    # Tags (public cible) - Stockés sous forme de chaîne séparée par des virgules
+    tags = models.CharField(
+        max_length=200,
+        blank=True,
+        null=True,
+        verbose_name="Publics cibles (Tags)",
+        help_text="Séparer les tags par des virgules"
+    )
+    # Image et QR Code
+    cover_image = models.ImageField(
+        upload_to='event_covers/',
+        blank=True,
+        null=True,
+        verbose_name="Image de couverture"
+    )
+    qr_code = models.ImageField(
+        upload_to='qr_codes/',
+        blank=True,
+        null=True,
+        verbose_name="QR Code"
+    )
+
+    # Relations
+    organizer = models.ForeignKey(
+        CustomUser,
+        on_delete=models.CASCADE,
+        related_name='organized_events',
+        verbose_name="Organisateur"
+    )
 
     # Suivi
     created_at = models.DateTimeField(auto_now_add=True)

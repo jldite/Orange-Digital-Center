@@ -494,22 +494,30 @@
 
             <!-- Tags améliorés -->
             <div class="bg-gray-50 dark:bg-gray-800 p-6 rounded-2xl">
-                <label class="form-label">
-                    Public cible (Tags)
-                </label>
-                <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">
-                    Sélectionnez les publics cibles pour cet événement
-                </p>
+                <label class="form-label">Publicible (Tags)</label>
+                <p class="text-gray-500 dark:text-gray-400 text-sm mb-4">Sélectionnez les publics cibles pour cet événement</p>
                 <div class="flex flex-wrap">
-                    {% for value, label in form.tags.field.choices %}
-                        <label class="tag-selector {% if value in form.tags.value or value|stringformat:'s' in form.tags.value %}selected{% endif %}">
-                            <input type="checkbox"
-                                   name="tags"
-                                   value="{{ value }}"
-                                   {% if value in form.tags.value or value|stringformat:'s' in form.tags.value %}checked{% endif %}>
-                            <span class="ml-2">{{ label }}</span>
-                        </label>
-                    {% endfor %}
+                    <!-- Tags prédéfinis du CDC -->
+                    <label class="tag-selector {% if 'FEMME' in form.tags.value %}selected{% endif %}">
+                        <input type="checkbox" name="tags" value="FEMME" {% if 'FEMME' in form.tags.value %}checked{% endif %}>
+                        <span class="ml-2">Femme</span>
+                    </label>
+                    <label class="tag-selector {% if 'ENTREPRENEUR' in form.tags.value %}selected{% endif %}">
+                        <input type="checkbox" name="tags" value="ENTREPRENEUR" {% if 'ENTREPRENEUR' in form.tags.value %}checked{% endif %}>
+                        <span class="ml-2">Entrepreneur</span>
+                    </label>
+                    <label class="tag-selector {% if 'ETUDIANT' in form.tags.value %}selected{% endif %}">
+                        <input type="checkbox" name="tags" value="ETUDIANT" {% if 'ETUDIANT' in form.tags.value %}checked{% endif %}>
+                        <span class="ml-2">Étudiant</span>
+                    </label>
+                    <label class="tag-selector {% if 'JEUNE' in form.tags.value %}selected{% endif %}">
+                        <input type="checkbox" name="tags" value="JEUNE" {% if 'JEUNE' in form.tags.value %}checked{% endif %}>
+                        <span class="ml-2">Jeune</span>
+                    </label>
+                    <label class="tag-selector {% if 'STARTUP' in form.tags.value %}selected{% endif %}">
+                        <input type="checkbox" name="tags" value="STARTUP" {% if 'STARTUP' in form.tags.value %}checked{% endif %}>
+                        <span class="ml-2">Startup</span>
+                    </label>
                 </div>
             </div>
 
